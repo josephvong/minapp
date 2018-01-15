@@ -46,13 +46,18 @@
 
     onLoad() {
       let This = this
-      this.$parent.getUserInfo((userInfo)=>{
+      this.$parent.getUserInfo().then((info)=>{
+        console.log(info)
+        this.userInfo = info
+        this.$apply()
+      })
+      /*(userInfo)=>{
         console.log(userInfo)
         if(userInfo){
           This.userInfo = userInfo
         }
-        This.$apply() 
-      })
+         
+      })*/
     }
   }
 </script>

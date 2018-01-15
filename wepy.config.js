@@ -13,7 +13,9 @@ module.exports = {
   resolve: {
     alias: {
       counter: path.join(__dirname, 'src/components/counter'),
-      '@': path.join(__dirname, 'src')
+      '@': path.join(__dirname, 'src'),
+      'common':path.join(__dirname, 'src/common'),
+      'api':path.join(__dirname, 'src/common/api')
     },
     modules: ['node_modules']
   },
@@ -35,6 +37,7 @@ module.exports = {
         'transform-decorators-legacy',
         'transform-object-rest-spread',
         'transform-export-extensions',
+        "syntax-export-extensions"   // wepy项目中使用async await
       ]
     }
   },

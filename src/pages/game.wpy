@@ -1,7 +1,7 @@
 
 <template>
   <view class="container"> 
-     this is game
+     this is game 2 {{length}}
   </view>
 </template>
 
@@ -19,8 +19,9 @@
 
     data = {
       userInfo:{
-        nickName: '加载中...'
-      }
+        nickName: '加载中...',  
+      },
+      length:0
     }
 
     computed = {
@@ -36,14 +37,17 @@
     }
 
     onLoad() {
-      let This = this
-      /*this.$parent.getUserInfo((userInfo)=>{
-        console.log(userInfo)
-        if(userInfo){
-          This.userInfo = userInfo
-        }
-        This.$apply() 
-      })*/
+      let This = this 
+      wepy.request('https://m.9kacha.com/activities/jd_lafitte/api/getActivityData.php').then((res)=>{ 
+        console.log(res.data.state)
+        this.length = res.data.state
+        this.$apply();
+      }) 
+        /*success:function(d){
+          console.log(d)
+        }*/
+      
+      
     }
   }
 </script>

@@ -35,11 +35,14 @@ export default class extends wepy.app {
 
   constructor () {
     super()
-    this.use('requestfix')
+    this.use('promisify'); // 添加 promisify 使用 promise
+    this.use('requestfix');
+
   }
 
   onLaunch() {
     this.testAsync()
+    //this.getUserInfo()
   }
 
   sleep (s) {
@@ -55,17 +58,21 @@ export default class extends wepy.app {
     console.log(data)
   }
 
-  getUserInfo(cb) {
+  getUserInfo() {
     const that = this
     if (this.globalData.userInfo) {
       return this.globalData.userInfo
     }
-    wepy.getUserInfo({
+    return wepy.getUserInfo().then((res)=>{
+      that.globalData.userInfo = res.userInfo; 
+      return Promise.resolve(res.userInfo)
+    })
+    /*wepy.getUserInfo({
       success (res) {
         that.globalData.userInfo = res.userInfo
         cb && cb(res.userInfo)
       }
-    })
+    })*/
   }
 }
 </script>
