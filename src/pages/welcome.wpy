@@ -1,0 +1,87 @@
+
+<template>
+  <view class="container"> 
+    <view class="userinfo">
+      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}"></image>
+      <view class="userinfo-nickname">欢迎您 {{userInfo.nickName}}</view> 
+      <view class="enter-btn" @tap="routerGo('game')">进入游戏</view>
+    </view>
+   
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy' 
+
+  export default class Welcome extends wepy.page {
+    config = {
+      navigationBarTitleText: 'test'
+    }
+    components = { 
+    }
+
+    //mixins = [testMixin]
+
+    data = {
+      userInfo:{
+        nickName: '加载中...'
+      }
+    }
+
+    computed = {
+       
+    } 
+
+    methods = {
+      routerGo(path){
+        this.$redirect({
+          url:'./game'
+        })
+      }
+    }
+
+    events = {
+       
+    }
+
+    onLoad() {
+      let This = this
+      this.$parent.getUserInfo((userInfo)=>{
+        console.log(userInfo)
+        if(userInfo){
+          This.userInfo = userInfo
+        }
+        This.$apply() 
+      })
+    }
+  }
+</script>
+
+<style lang="less">
+.userinfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+}
+
+.userinfo-avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+}
+
+.userinfo-nickname {
+  margin-top:30px;
+  color: #aaa;
+}
+.enter-btn{
+  display: inline-block;
+  height:60rpx;
+  line-height: 60rpx;
+  padding:0 20px;
+  margin-top:150rpx;
+  color: black;
+  border:1px solid #aaa;
+  border-radius:10px
+}
+</style>

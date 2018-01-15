@@ -1,0 +1,53 @@
+
+<template>
+  <view class="container"> 
+     this is game
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy' 
+
+  export default class Game extends wepy.page {
+    config = {
+      navigationBarTitleText: 'Game'
+    }
+    components = { 
+    }
+
+    //mixins = [testMixin]
+
+    data = {
+      userInfo:{
+        nickName: '加载中...'
+      }
+    }
+
+    computed = {
+       
+    } 
+
+    methods = {
+       
+    }
+
+    events = {
+       
+    }
+
+    onLoad() {
+      let This = this
+      /*this.$parent.getUserInfo((userInfo)=>{
+        console.log(userInfo)
+        if(userInfo){
+          This.userInfo = userInfo
+        }
+        This.$apply() 
+      })*/
+    }
+  }
+</script>
+
+<style lang="less">
+
+</style>
