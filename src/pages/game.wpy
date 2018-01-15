@@ -1,27 +1,54 @@
 
 <template>
-  <view class="container"> 
-     this is game 2 {{length}}
+  <view class="container" style="align-items:center"> 
+    <view class="question-wrap">
+      <view class="quest-body">
+        <view class="img-wrap">
+          <radio-group  bindchange="radioChange" >
+            <label class="select-cover"  wx:for="{{selectOpt}}" wx:key="{{index}}" style="opacity:{{selectVal==item.value?1:0}}" >
+              <radio value="{{item.name}}" disabled="{{isAnswered}}" style="display:none" /> 
+            </label>
+          </radio-group> 
+  
+          <view class="img left" style="background-image:url(https://m.9kacha.com/activities/jd_lafitte/images/11A.png)"></view>
+          <view class="img right" style="background-image:url(https://m.9kacha.com/activities/jd_lafitte/images/11A.png)"></view>
+
+          <view class="confirm_btn {{selectVal?'active':''}}" @tap="confirmHandle">确定答案</view> 
+        </view>
+      </view>
+    </view>
+    <text class="test">test</text>
+    <popUp></popUp> 
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy' 
+  import wepy from 'wepy'
+  import popUp from 'components/popUp' 
 
   export default class Game extends wepy.page {
     config = {
       navigationBarTitleText: 'Game'
     }
-    components = { 
+    components = {
+      popUp 
     }
 
     //mixins = [testMixin]
 
     data = {
-      userInfo:{
-        nickName: '加载中...',  
-      },
-      length:0
+      // 选项 数据
+      selectOpt:[
+        {name:'1',value:1},
+        {name:'2',value:2}
+      ], 
+      selectVal:0,
+      
+      // 问题数据列表 
+      questionList:[],
+      nowIndex:0,
+      isAnswered: false, // 问题作答状态
+
     }
 
     computed = {
@@ -29,7 +56,15 @@
     } 
 
     methods = {
-       
+      radioChange: function(e) {
+        this.selectVal =  e.detail.value
+        console.log(e.detail.value)
+      },
+
+      confirmHandle: function(){
+        if(!this.selectVal){return}
+        this.isAnswered = true
+      }
     }
 
     events = {
@@ -39,19 +74,83 @@
     onLoad() {
       let This = this 
       wepy.request('https://m.9kacha.com/activities/jd_lafitte/api/getActivityData.php').then((res)=>{ 
-        console.log(res.data.state)
-        this.length = res.data.state
+        this.questionList = res.data.jsonData
         this.$apply();
-      }) 
-        /*success:function(d){
-          console.log(d)
-        }*/
-      
-      
+      })  
     }
   }
 </script>
 
-<style lang="less">
+<style lang="stylus"  scoped>
+.question-wrap
+  display block
+  width 100% 
+  .quest-body
+    display block
+    width 100%
+    margin 70rpx auto 
+    
+    .img-wrap
+      position relative
+      width 85%
+      height 0
+      padding-top 70%
+      margin 0 auto 
+      .img
+        position absolute
+        top 0
+        bottom 31.2%
+        background #222222
+        background-clip:content-box
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        border 4rpx solid #ccc
+        padding 20rpx 0
+        &.left
+          left 3.6%
+          right 55%
+        &.right
+          left 55%
+          right 3.6% 
+    
+    .confirm_btn  // 确认按钮
+      position absolute
+      left 20%
+      bottom 0 
+      display inline-block
+      text-align center
+      height 82rpx
+      width 60%
+      line-height 82rpx
+      border-radius 41rpx
+      font-size 32rpx
+      color white
+      background #ccc
+      &.active
+        background #E7E1BD
+        
+     
+    .select-cover
+      position absolute
+      display block
+      top 0
+      bottom 31.2%
+      border 4rpx solid #efcd91 
+      box-shadow 0 0 30rpx 2rpx 
+      //opacity 0.2
+      z-index 2
+      &:nth-of-type(1)//.left
+        left 3.6%
+        right 55%
+        //background yellow
+      &:nth-of-type(2)//.right
+        left 55%
+        right 3.6%
+        //background blue   // 点击label
+    input[type=radio]
+      display none
 
+.test
+  color blue
 </style>

@@ -62,7 +62,7 @@
   }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .userinfo {
   display: flex;
   flex-direction: column;

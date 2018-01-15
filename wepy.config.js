@@ -15,13 +15,17 @@ module.exports = {
       counter: path.join(__dirname, 'src/components/counter'),
       '@': path.join(__dirname, 'src'),
       'common':path.join(__dirname, 'src/common'),
-      'api':path.join(__dirname, 'src/common/api')
+      'api':path.join(__dirname, 'src/common/api'),
+      'components':path.join(__dirname, 'src/components')
     },
     modules: ['node_modules']
   },
   eslint: true,
   compilers: {
     less: {
+      compress: true
+    },
+    stylus:{
       compress: true
     },
     /*sass: {

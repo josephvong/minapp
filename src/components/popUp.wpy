@@ -1,0 +1,53 @@
+
+<template>
+  <view class="popup" style="z-index:{{zIndex-1}}">
+     <view class="popup-bg" >bg</view>
+     <view class="popup-wrap test">
+       hello popup
+     </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy' 
+
+  export default class popUp extends wepy.component {
+    props = {
+      zIndex:{
+        type:Number,
+        default:50
+      }
+    }
+
+    data = {
+      popUpShow:false
+    }
+    events = {
+      
+    }
+
+    watch = {
+       
+    }
+
+    methods = {
+      openPopup(){ 
+        this.popUpShow = true
+      },
+      closePopup(){ 
+        this.popUpShow = false
+      }
+    }
+  }
+</script>
+<style lang="stylus"  scoped>
+.popup 
+  display block
+  position fixed
+  left 0
+  right 0 
+  top 50%
+  bottom 0
+  background rgba(0,0,0,0.4)
+  .test
+    color green  
+</style>
