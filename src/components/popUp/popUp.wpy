@@ -1,0 +1,88 @@
+<style lang="stylus">
+.popup, .popup-bg
+  position fixed
+  left 0
+  top 0   
+  width: 100%;
+  height: 100%;
+  .pos-wrap
+    position relative
+    width: 100%
+    height: 100%
+    .popup-modal
+      position:absolute;
+      top:50%;
+      left:10%;
+      right:10%;
+      transform: translate(0,-50%);
+      max-height:130%;
+      padding 0.32rem
+      border 0.01rem solid gray
+      border-radius 0.2rem
+      background white
+      .wrap
+        position relative
+        width 100%
+        padding 20rpx
+        .close
+          position absolute
+          display block
+          width 30rpx
+          height 30rpx
+          top -10rpx
+          right 30rpx
+          
+.popup-bg 
+  background: rgba(0,0,0,0.4);
+
+.test
+  color: green;  
+ 
+</style>
+<template>
+  <view class="popup" style="z-index:{{zIndex-1}};display:{{popUpShow?'block':'none'}}" >
+     <view class="popup-bg" style="z-index:{{zIndex}};display:{{popUpShow?'block':'none'}}" 
+     @tap="closePopup"></view>
+     <view class="pos-wrap">
+       <view class="popup-modal"  style="z-index:{{zIndex+1}}">
+        <view class="wrap">
+          <image class="close" @tap="closePopup" src="./cancel.png"></image> 
+          <slot></slot>
+        </view>
+      </view>
+     </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy' 
+
+  export default class popUp extends wepy.component {
+    props = {
+      zIndex:{
+        type:Number,
+        default:50
+      }
+    }
+
+    data = {
+      popUpShow:false
+    }
+    events = {
+      
+    }
+
+    watch = {
+       
+    }
+
+    methods = {
+      openPopup(){ 
+        this.popUpShow = true
+      },
+      closePopup(){ 
+        //console.log("CCC")
+        this.popUpShow = false
+      }
+    }
+  }
+</script>

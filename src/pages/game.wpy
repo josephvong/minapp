@@ -10,22 +10,28 @@
             </label>
           </radio-group> 
   
-          <view class="img left" style="background-image:url(https://m.9kacha.com/activities/jd_lafitte/images/11A.png)"></view>
-          <view class="img right" style="background-image:url(https://m.9kacha.com/activities/jd_lafitte/images/11A.png)"></view>
+          <view class="img left" style="background-image:url({{questionList[nowIndex].answers_firsturl}})"></view>
+          <view class="img right" style="background-image:url({{questionList[nowIndex].answers_securl}})"></view>
 
           <view class="confirm_btn {{selectVal?'active':''}}" @tap="confirmHandle">确定答案</view> 
         </view>
       </view>
     </view>
-    <text class="test">test</text>
-    <popUp></popUp> 
+    <image mode="widthFix" class="reason" style="display:{{reasonShow?'block':'none'}}" src="{{questionList[nowIndex].reason}}">
+    </image>  
+    <popUp>
+      <view style="font-size:40rpx">
+        <text>{{selectVal==questionList[nowIndex].correct_answers?'正确':'错误'}}</text>
+        <view>下一题</view>
+        <view @tap="showReason">查看答案</view>
+      </view>  
+    </popUp> 
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  import popUp from 'components/popUp' 
-
+  import popUp from 'components/popUp/popUp' 
   export default class Game extends wepy.page {
     config = {
       navigationBarTitleText: 'Game'
@@ -49,6 +55,8 @@
       nowIndex:0,
       isAnswered: false, // 问题作答状态
 
+      reasonShow:false,
+
     }
 
     computed = {
@@ -64,6 +72,16 @@
       confirmHandle: function(){
         if(!this.selectVal){return}
         this.isAnswered = true
+
+
+        
+        this.$invoke('popUp','openPopup')
+      },
+
+      showReason(){ 
+        this.reasonShow = true;
+
+        this.$invoke('popUp','closePopup')
       }
     }
 
@@ -76,7 +94,8 @@
       wepy.request('https://m.9kacha.com/activities/jd_lafitte/api/getActivityData.php').then((res)=>{ 
         this.questionList = res.data.jsonData
         this.$apply();
-      })  
+      }) 
+
     }
   }
 </script>
@@ -150,7 +169,9 @@
         //background blue   // 点击label
     input[type=radio]
       display none
-
+.reason
+  display block
+  width 80% 
 .test
-  color blue
+  color red
 </style>
