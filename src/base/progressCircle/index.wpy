@@ -1,0 +1,109 @@
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="stylus" > 
+.progress-circle
+  position relative
+  background red 
+  /*.svg
+    left 0
+    top 0
+    position:absolute;
+    circle
+      stroke-width 10px
+      transform-origin center
+      &.progress-background
+        //stroke: #BCC6CB
+        transform:scale(0.8)
+      &.progress-bar
+        //stroke green//#FC930F
+        transform:scale(0.8)
+        transition stroke-dashoffset 0.1s 
+  .count
+    position absolute
+    left 20%
+    top 20%
+    width:60%;
+    height:60%;
+    text-align center 
+    //padding-top 10px
+    &:before
+      content ''
+      display inline-block
+      height 100%
+      width 1px
+      vertical-align middle
+    strong
+      text-align center
+      display inline
+      width 100%
+      font-weight bold 
+      //margin-left 10px*/
+
+</style>
+<template>
+  <view class="progress-circle" style="width:{{radius+'rpx'}};height:{{radius+'rpx'}}" >
+    <svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" version="1.1"  width="{{radius+'rpx'}}" height="{{radius+'rpx'}}" >
+      <circle class="progress-background" style="stroke:{{bgColor}}" r="50" cx="50" cy="50" fill="transparent">
+      </circle>
+      <circle ref="circleBar" class="progress-bar" style="stroke:{{trackColor}}" r="50" cx="50" cy="50" fill="transparent"
+        stroke-dasharray="{{dashArray}}" stroke-dashoffset="{{dashoffset}}"
+      >
+      </circle> 
+    </svg>
+    <!-- <view class="count"  >
+      <strong style="font-size:{{0.3*radius+'px'}};color:{{centerColor}}">{{centerShow}}</strong>
+    </viwe> -->
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy' 
+
+export default class progressCircle extends wepy.component {
+  //name: 'progressCircle',
+  props={
+    radius:{
+      type:Number,
+      default:100
+    },
+    bgColor:{
+      type:String,
+      default:'#BCC6CB'
+    },
+    
+    percent:{
+      type:Number,
+      default:20
+    },
+    showPercent:{
+      type:String,
+      default:''
+    },
+    
+    trackColor:{
+      type:String,
+      default:'#FC930F'
+    },
+    centerColor:{
+      type:String,
+      default:'#000000'
+    }
+  } 
+  data = { 
+    dashArray: Math.PI * 100,
+  }
+
+  computed = {
+    
+
+  }  
+
+  methods = {
+
+  }
+}
+</script>
+
+
+
+
+
