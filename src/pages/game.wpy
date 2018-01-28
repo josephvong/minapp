@@ -22,7 +22,7 @@
       </view>
     </view>
     <progressCircle percent="{{20}}"></progressCircle>
-    <image mode="widthFix" class="reason" style="display:{{reasonShow?'block':'none'}}" src="{{questionList[nowIndex].reason}}">
+    <image id="reason" mode="widthFix" class="reason" style="display:{{reasonShow?'block':'none'}}" src="{{questionList[nowIndex].reason}}">
     </image>  
     <popUp>
       <view style="font-size:40rpx">
@@ -100,6 +100,9 @@
         this.questionList = res
         this.$apply();
       }) 
+
+      var query = wx.createSelectorQuery().in(this)
+      console.log(query.select('#reason'))
     }
   }
 </script>
