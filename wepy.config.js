@@ -17,7 +17,8 @@ module.exports = {
       'common':path.join(__dirname, 'src/common'),
       'api':path.join(__dirname, 'src/common/api'),
       'components':path.join(__dirname, 'src/components'),
-      'base':path.join(__dirname, 'src/base')
+      'base':path.join(__dirname, 'src/base'),
+      'cusFn':path.join(__dirname, 'src/common/js/cusFn')
     },
     modules: ['node_modules']
   },

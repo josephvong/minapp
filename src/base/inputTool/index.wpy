@@ -1,0 +1,86 @@
+<style lang="stylus"> 
+.input-tool
+  display flex
+  flex-direction row
+  align-items center
+  width 100%
+  height 80rpx
+  border-radius 50rpx
+  background #F3F1F2
+  .icon
+    flex 0 0 auto 
+    padding 0 10rpx
+    color #BDBDBD 
+  .input-wrap
+    flex 1 
+  .clear-btn
+    flex 0 0 auto 
+    padding 0 10rpx
+    color #BDBDBD 
+</style>
+
+<template>
+<form style="display:block">
+  <view class="input-tool">
+    <icon class="icon" type="search" size="20" />
+    <view class="input-wrap">
+     <input class="text" type="text" @input="inputChange" placeholder="搜索" value="{{inputValue}}" />
+    </view>
+    <icon @tap="clearBtnTap" class="clear-btn" type="cancel" size="20" color="#BDBDBD" />
+  </view>
+</form> 
+</template>
+
+<script>
+  import wepy from 'wepy' 
+  import {debounce} from 'cusFn/dom' 
+  export default class InputTool extends wepy.component {
+    props = {
+
+    }
+
+    components = { 
+    } 
+
+    data = {
+      inputValue:''
+    }
+
+    computed = {
+       
+    } 
+
+    methods = {
+      inputChange(event){
+        this.inputValue = event.detail.value 
+      },
+
+      clearBtnTap(){ 
+        this.inputValue = ''
+      } 
+    }
+
+    events = {
+
+    }
+
+    watch = {
+      inputValue(newVal){
+        let This = this 
+        debounce(function(){ 
+          This.$emit('inputChange', newVal)
+        }, 300)()
+      }
+    }
+
+    events = {
+       
+    }
+
+    onLoad() {
+       
+    }
+  }
+</script>
+
+
