@@ -20,7 +20,7 @@
 </style>
 
 <template>
-<form style="display:block">
+<form style="display:block" @submit="inputToolSubmit">
   <view class="input-tool">
     <icon class="icon" type="search" size="20" />
     <view class="input-wrap">
@@ -55,8 +55,16 @@
         this.inputValue = event.detail.value 
       },
 
+      setInputVal(str){
+        this.inputValue = str 
+      },
+
       clearBtnTap(){ 
         this.inputValue = ''
+      },
+
+      inputToolSubmit(){
+        this.$emit('inputSubmit', this.inputValue)
       } 
     }
 

@@ -1,4 +1,7 @@
 <style lang="less">
+view,ul,li {
+  box-sizing: border-box;
+}
 .container {
   height: 100%;
   display: flex;
@@ -7,6 +10,18 @@
   justify-content: space-between;
   box-sizing: border-box;
 }
+.clearfix{
+  display:inline-block 
+}
+.clearfix:after{
+  content: "";
+  display: block;  
+  height: 0; 
+  line-height: 0;
+  clear: both;
+  visibility: hidden
+} 
+  
 </style>
 
 <script>
@@ -30,7 +45,7 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    userInfo: null,
+    wxUserInfo: null,
     kachaUserInfo:null
   }
 
@@ -40,16 +55,13 @@ export default class extends wepy.app {
     this.use('requestfix'); 
   }
 
-  async onLaunch() {
-    const loginData = await this.wxlogin();
-    const userData = await this.getUserInfo();
-    console.log(loginData)
-    console.log(userData.userInfo)
-    kachaAuthApi(loginData, userData).then((res)=>{
-      console.log(res)
+  onLaunch() { 
+    this.userAuth().then((res)=>{
+      wepy.setStorage({
+        key:"UserInfo",
+        data:res
+      })
     })
-    //this.getUserInfo()
-     
   }
 
   wxlogin() {
@@ -72,9 +84,24 @@ export default class extends wepy.app {
         })
       }
     }) 
+  } 
+
+  async userAuth(){
+    let userInfo = null
+    if(this.globalData.wxUserInfo && this.globalData.kachaUserInfo){
+      userInfo = {wxUserInfo:this.globalData.wxUserInfo,kachaUserInfo:this.globalData.kachaUserInfo }
+      return userInfo
+    }else{
+      const loginData = await this.wxlogin();
+      const wxUserData = await this.getUserInfo(); 
+      this.globalData.wxUserInfo = wxUserData.userInfo
+      this.globalData.kachaUserInfo = await kachaAuthApi(loginData, wxUserData);
+      return userInfo = {wxUserInfo:this.globalData.wxUserInfo,kachaUserInfo:this.globalData.kachaUserInfo }
+    } 
   }
 
-  kachaInfo
+
+   
 
 
   /*
