@@ -4,7 +4,8 @@
     <view class="userinfo">
       <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}"></image>
       <view class="userinfo-nickname">欢迎您 {{userInfo.nickName}}</view> 
-      <view class="enter-btn" @tap="routerGo('game')">进入游戏</view>
+      <view class="enter-btn" @tap="routerGo('txtsearch')">文字搜索</view>
+      <view class="enter-btn" @tap="routerGo('imgsearch')">酒标搜索</view>
     </view>
    
   </view>
@@ -24,7 +25,8 @@
 
     data = {
       userInfo:{
-        nickName: '加载中...'
+        nickName: '加载中...',
+        isAuthed:false
       }
     }
 
@@ -34,9 +36,9 @@
 
     methods = {
       routerGo(path){
-        this.$redirect({
-          url:'./game'
-        })
+        if(this.isAuthed){
+          this.$redirect({ url:`./${path}/index` })
+        }  
       }
     }
 
@@ -46,18 +48,12 @@
 
     onLoad() {
       let This = this
-      this.$parent.getUserInfo().then((info)=>{
-        console.log(info)
-        this.userInfo = info
+      this.$parent.userAuth().then((res)=>{ 
+        this.userInfo = res.wxUserInfo
+        this.isAuthed = true
         this.$apply()
       })
-      /*(userInfo)=>{
-        console.log(userInfo)
-        if(userInfo){
-          This.userInfo = userInfo
-        }
-         
-      })*/
+       
     }
   }
 </script>

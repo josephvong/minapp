@@ -1,0 +1,309 @@
+
+<template>
+  <view class="txt-search-page">
+    <view class="search-header">
+      <view class="text-wrap">
+        <inputTool @inputChange.user="queryChange" @inputSubmit.user="searchWordSend"
+        ></inputTool>
+      </view>
+    </view>  
+
+    <view class="short-cut-wrap" style="display:{{resultShow?'none':'block'}}">  
+      <view class="hot-link"  style="display:{{relateShow?'none':'block'}}" >
+        <view class="title">热门搜索</view>
+        <ul wx:if="{{hotWordList.length}}" class="word-list clearfix">
+          <li @tap="searchWordSend({{item}})" wx:for="{{hotWordList}}" wx:key="index">{{item}}</li>
+        </ul>
+      </view>
+      <view class="history-link"  style="display:{{relateShow?'none':'block'}}" >
+        <view class="title">历史搜索</view>
+        <ul wx:if="{{historyList.length}}" class="word-list">
+          <li wx:for="{{historyList}}" wx:key="index">
+            <span @tap="searchWordSend({{item}})" class="content">{{item}}</span>
+            <icon @tap="deleteHistoryWord({{item}})" class="delete-item" type="cancel" size="20" color="#BDBDBD" />
+          </li>
+           
+        </ul>
+      </view>
+      <view class="suggest-link" style="display:{{relateShow?'block':'none'}}">
+        
+        <view class="search-query">点击搜索: <span >{{query}}</span> </view>
+        
+        <ul wx:if="{{suggestWordList.length}}" class="suggest-list ">
+          <li wx:if="item!=null" @tap="searchWordSend({{item}})" wx:for="{{suggestWordList}}" wx:key="index">{{item}}</li>
+        </ul>
+      </view>
+    </view>
+    
+    <view class="result-wrap"  style="display:{{resultShow?'block':'none'}}" >
+      <scroll-view class="result-list-wrap" scroll-y @scrolltolower="listLoadMore"> 
+        <ul class="result-list" wx:if="{{resultList.length}}" > 
+          <repeat for="{{resultList}}" key="index" index="index" item="item"> 
+            <listItem :itemData="item"></listItem> 
+          </repeat> 
+        </ul>
+        <view class="list-bottom">
+          <text style="display:{{listEnd?'none':'block'}}">正在玩命加载中</text>
+          <text style="display:{{listEnd?'block':'none'}}">加载完成</text>
+        </view> 
+      </scroll-view>
+       
+    </view>
+     
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy' 
+  import inputTool from 'base/inputTool/index'
+  import listItem from 'components/listItem/index'
+
+  import {searchHisSave, searchHisDelete, searchHisSaveLoad} from './search_history.js' 
+  import {hotWordApi,relateWordApi,resultListApi} from 'api/txtSearchApi/index'
+
+  const SEARCH_HISTORY = 'SEARCH_HISTORY'
+  const HISTORY_LIST = searchHisSaveLoad()
+
+  export default class txtSearch extends wepy.page {
+    config = {
+      navigationBarTitleText: '搜索'
+
+    }
+
+    components = {
+      inputTool:inputTool,
+      listItem:listItem
+    }
+
+    //mixins = [testMixin]
+
+    data = {
+      testNum:300, 
+      //-------切换状态 flag----------
+      query:'',
+      resultShow: false, // 结果显示控制
+
+      //------------数据列表-------------- 
+      hotWordList:[],
+      suggestWordList:[],
+      resultList:[],
+      historyList: HISTORY_LIST, 
+
+      //---------------翻页加载-----------------
+      pageIndex:1,
+      loading:false,
+      listEnd:false,
+    }
+
+    computed = {
+      relateShow(){
+        return this.query ==''?false:true
+      }, 
+    } 
+
+    methods = {
+      // ------------------事件监听函数 ------------------- 
+      deleteHistoryWord(item){ 
+        searchHisDelete(item)
+        this.historyList = searchHisSaveLoad()
+      },
+
+      searchWordSend(item){ //  监听 搜索词（热门/历史/推荐）点击
+        searchHisSave(item)
+        this.historyList = searchHisSaveLoad()//wepy.getStorageSync(SEARCH_HISTORY)
+        
+        this.resultShow = true 
+        this.$invoke('inputTool','setInputVal',item) // 设置inputTool
+        this.query = item  
+        this.listEnd = false  // 恢复可无限加载
+        this.resultList = [] // 清空结果
+        this.pageIndex = 1 // 回到 第一页 
+        this.methods.getResultList({  //获取数据
+          wordStr:this.query,
+          pageIndex:this.pageIndex
+        },this)
+      },
+ 
+      listLoadMore(){
+        if(this.listEnd) return  
+        this.loading=true
+        this.pageIndex += 1 
+        resultListApi({
+          wordStr:this.query,
+          pageIndex:this.pageIndex
+        }).then((res)=>{
+          if(res.length){
+            let tempArr = []
+            tempArr = res
+            this.resultList = this.resultList.concat(tempArr) 
+          }else{
+            this.listEnd = true
+          }
+          this.loading = false
+          this.$apply()
+        })  // 监听 滚动到底部加载更多
+      },
+
+    
+      queryChange(val){ //  
+        this.query = val
+        if(this.query){ 
+          this.methods.getSuggestWord(this.query,this)
+        }else{
+          this.resultShow = false
+          this.suggestWordList = []
+        } 
+      },
+
+      //--------------数据变化处理函数----------
+       
+      //----------------------------------------------
+
+      //-------------API 调用函数 ---------------
+      getHotWord(module){  // 获取 热门列表
+        hotWordApi().then((res)=>{ 
+          module.hotWordList = res 
+          module.$apply(); 
+        })
+      }, 
+      getSuggestWord(query,module){ // 关联词语列表 
+        relateWordApi(query).then((res)=>{ 
+          module.suggestWordList = res
+          module.$apply(); 
+        })
+      }, 
+      getResultList(info,module){
+        resultListApi(info).then((res)=>{
+          module.resultList = res
+          if(res.length<10){
+            module.listEnd = true
+          }
+          module.$apply()
+        })
+      },
+      //-------------API 调用函数 ---------------
+
+      check(){
+        this.$parent.userAuth().then((res)=>{
+          console.log(res)
+        })
+      }
+
+       
+       
+    }
+
+    events = {
+       
+    }
+
+    watch = {
+       
+    }
+
+    events = {
+       
+    }
+
+    onLoad() {
+      this.methods.getHotWord(this) 
+      console.log(searchHisSaveLoad())
+    }
+  }
+</script>
+
+<style lang="stylus">
+.txt-search-page
+  padding-top 100rpx
+  .search-header
+    position fixed
+    left 0
+    top 0
+    width 100%
+    height 80rpx 
+    .text-wrap
+      display block 
+      width 80% 
+      margin 0 auto 
+  .short-cut-wrap
+    width 100%
+    padding 20rpx
+    .hot-link
+      .title
+        line-height 78rpx
+        font-size 30rpx
+        color #aeaeae;
+      .word-list
+        display flex
+        flex-flow row wrap 
+        width 100%
+        margin 0 auto
+        box-sizing border-box 
+        li 
+          flex 0 1 auto
+          display inline-block
+          margin-left 20rpx
+          margin-bottom 20rpx
+          padding 0 15rpx
+          line-height 60rpx
+          font-size 24rpx 
+          border 1rpx solid #aeaeae
+          border-radius 5rpx
+    .history-link
+      .title
+        line-height 78rpx
+        font-size 30rpx
+        color #aeaeae;
+      .word-list
+        display block
+        width 100%
+        padding 0 20rpx 
+        margin 0 auto
+        box-sizing border-box 
+        li  
+          display flex
+          flex-flow row no-wrap
+          align-items center
+          width 100% 
+          span.content
+            flex 1 1 auto
+            line-height 60rpx
+            font-size 28rpx 
+    .suggest-link
+      .search-query
+        line-height 78rpx
+        font-size 30rpx
+        span
+          padding 0 10rpx
+          color #c23b4c
+      .suggest-list
+        display block
+        width 100%
+        padding 0 20rpx 
+        margin 0 auto
+        box-sizing border-box
+        li
+          display block
+          line-height 60rpx
+          font-size 28rpx 
+  .result-wrap
+    position fixed 
+    top 100rpx
+    left 0
+    right 0
+    bottom 0
+    background yellow                
+    .result-list-wrap
+      width: 100%; 
+      height:100%;
+      background:white;
+      .result-list
+        display block
+        background #f7f7f7
+      .list-bottom
+        width 100%
+        text-align center
+        line-height 120rpx
+        
+            
+</style>

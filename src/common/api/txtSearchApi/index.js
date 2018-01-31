@@ -5,14 +5,19 @@ const requestHeader = {
     'content-type':'application/x-www-form-urlencoded;charset=UTF-8'
   }
 }
-const authObj = {
-  authmode:'user',
-  authparams:{...wepy.getStorageSync('UserInfo').kachaUserInfo}  
+
+const authObj = function(){
+  let kachaUser = wepy.getStorageSync('UserInfo').kachaUserInfo;
+  return {
+    authmode:'user',
+    authparams:kachaUser  
+  } 
 }
 
 // 热门列表接口
-export function hotWordApi(){  
-  let data = { wordStr:'', ...authObj } 
+export function hotWordApi(){ 
+  let auth = authObj() 
+  let data = { wordStr:'', ...auth } 
   return wepy.request({
     url:'https://wdsapi.9kacha.com/util/word_search.php', 
     data:{
@@ -37,7 +42,8 @@ export function hotWordApi(){
 
 // 关联选项接口
 export function relateWordApi(queryStr){
-  let data = {wordStr:queryStr, ...authObj}
+  let auth = authObj() 
+  let data = {wordStr:queryStr, ...auth}
   return wepy.request({
     url:'https://wdsapi.9kacha.com/util/word_suggest.php', 
     data:{ 
@@ -59,6 +65,8 @@ export function relateWordApi(queryStr){
 }
 
 export function resultListApi(info){
+  let auth = authObj()
+  console.log(info.pageIndex) 
   let data = {
     wordStr:info.wordStr,
     size:10,
@@ -68,7 +76,7 @@ export function resultListApi(info){
     //is_alias:is_alias, // 默认开启别名适配
     //grape_blend_flag:isMix?1:0,  // 默认不是混酿
     //rowSearch:rowSearch, 
-    ...authObj
+    ...auth
   }
   return wepy.request({
     url: 'https://wdsapi.9kacha.com/util/word_search.php',
@@ -77,18 +85,18 @@ export function resultListApi(info){
     },
     ...requestHeader
   }).then((res) => {
-    console.log(res)
-    
-    /*if(res && res.statusCode==200){
+    //console.log(res)
+
+    if(res && res.statusCode==200){
       let data = res.data
-      if(!data.status ){
-        return Promise.resolve(data.wordOnSuggest)
+      if(!data.status ){ 
+        return Promise.resolve(data.jsonData) 
       }else{
         return Promise.reject('数据获取失败')
       }
     }else{
       return Promise.reject('网络请求失败')
-    }*/
+    }
 
   })
 }

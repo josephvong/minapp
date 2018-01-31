@@ -20,11 +20,11 @@
 </style>
 
 <template>
-<form style="display:block" @submit="inputToolSubmit">
+<form style="display:block" >
   <view class="input-tool">
     <icon class="icon" type="search" size="20" />
     <view class="input-wrap">
-     <input class="text" type="text" @input="inputChange" placeholder="搜索" value="{{inputValue}}" />
+     <input class="text" type="text" placeholder="搜索" value="{{inputValue}}" @input="inputChange" @confirm="inputToolSubmit" />
     </view>
     <icon @tap="clearBtnTap" class="clear-btn" type="cancel" size="20" color="#BDBDBD" />
   </view>
@@ -33,10 +33,10 @@
 
 <script>
   import wepy from 'wepy' 
-  import {debounce} from 'cusFn/dom' 
+  import {debounce} from 'cusFn/dom'
   export default class InputTool extends wepy.component {
     props = {
-
+      
     }
 
     components = { 
@@ -63,7 +63,7 @@
         this.inputValue = ''
       },
 
-      inputToolSubmit(){
+      inputToolSubmit(event){ 
         this.$emit('inputSubmit', this.inputValue)
       } 
     }
@@ -77,7 +77,7 @@
         let This = this 
         debounce(function(){ 
           This.$emit('inputChange', newVal)
-        }, 300)()
+        }, 600)()
       }
     }
 

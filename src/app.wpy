@@ -31,9 +31,11 @@ import {kachaAuthApi} from 'api/kachaAuthApi/index'
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/search/index'
+      'pages/welcome',
+      'pages/txtsearch/index',
+      'pages/imgsearch/index',
       //'pages/game',
-      //'pages/welcome',
+      //
       //'pages/index',
     ],
     window: {
@@ -55,13 +57,13 @@ export default class extends wepy.app {
     this.use('requestfix'); 
   }
 
-  onLaunch() { 
-    this.userAuth().then((res)=>{
-      wepy.setStorage({
-        key:"UserInfo",
-        data:res
-      })
-    })
+  onLaunch() {
+    wx.removeStorageSync("UserInfo")
+
+    /*this.userAuth().then((res)=>{
+      console.log('get success')
+      //wepy.setStorageSync("UserInfo",{res})
+    })*/
   }
 
   wxlogin() {
@@ -88,7 +90,7 @@ export default class extends wepy.app {
 
   async userAuth(){
     let userInfo = null
-    if(this.globalData.wxUserInfo && this.globalData.kachaUserInfo){
+    if(this.globalData.wxUserInfo && this.globalData.kachaUserInfo && wepy.getStorageSync('UserInfo') ){
       userInfo = {wxUserInfo:this.globalData.wxUserInfo,kachaUserInfo:this.globalData.kachaUserInfo }
       return userInfo
     }else{
@@ -96,7 +98,10 @@ export default class extends wepy.app {
       const wxUserData = await this.getUserInfo(); 
       this.globalData.wxUserInfo = wxUserData.userInfo
       this.globalData.kachaUserInfo = await kachaAuthApi(loginData, wxUserData);
-      return userInfo = {wxUserInfo:this.globalData.wxUserInfo,kachaUserInfo:this.globalData.kachaUserInfo }
+      
+      userInfo = {wxUserInfo:this.globalData.wxUserInfo, kachaUserInfo:this.globalData.kachaUserInfo }
+      wepy.setStorageSync("UserInfo", userInfo)
+      return userInfo
     } 
   }
 

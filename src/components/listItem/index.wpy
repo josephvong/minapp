@@ -1,0 +1,98 @@
+<style lang="stylus"> 
+.list-item
+  display:block;
+  padding 20rpx  
+  background white
+  .item-wrap
+    display flex
+    align-items center
+    flex-flow row no-wrap
+    .left-icon
+      flex 0 0 25%
+      wdith 25%
+      height:200rpx;
+      margin-right 20rpx 
+      border 1rpx solid #f7f7f7
+      border-radius 5rpx 
+      background no-repeat
+      background-size contain
+      background-position center
+    .right-content
+      flex 1
+      width auto
+      padding-right 10rpx
+      min-width 0
+      height 200rpx
+      over-flow hidden 
+      .title_cn
+        line-height 36rpx
+        font-size 32rpx
+        font-weight 700
+        over-flow hidden
+      .title_en
+        line-height 30rpx
+        font-size 28rpx
+        
+      
+      
+      
+</style>
+
+<template>
+<li class="list-item">
+  <view class="item-wrap">
+    <view class="left-icon" style="background-image:url('{{itemData.pic_url}}')"
+    >
+      <!-- <image style="width:100%;" src="{{itemData.pic_url}}" alt=""></image> --> 
+    </view>
+    <view class="right-content"> 
+      <view class="title_cn" wx:if="itemData.name.name_ch">{{itemData.name.name_ch}}</view>
+      <view class="title_en" wx:if="itemData.name.name_en">{{itemData.name.name_en}}</view> 
+        
+    </view>
+   
+  </view>
+</li> 
+</template>
+
+<script>
+  import wepy from 'wepy'  
+  export default class listItem extends wepy.component {
+    props = {
+      itemData:{}
+    }
+
+    components = { 
+    } 
+
+    data = {
+       
+    }
+
+    computed = {
+       
+    } 
+
+    methods = {
+       
+    }
+
+    events = {
+
+    }
+
+    watch = {
+      
+    }
+
+    events = {
+       
+    }
+
+    onLoad() {
+       
+    }
+  }
+</script>
+
+
