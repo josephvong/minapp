@@ -37,7 +37,8 @@
     methods = {
       routerGo(path){
         if(this.isAuthed){
-          this.$redirect({ url:`./${path}/index` })
+          //this.$redirect({ url:`./${path}/index` })
+          this.$navigate({ url:`./${path}/index` })
         }  
       }
     }
