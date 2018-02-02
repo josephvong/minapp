@@ -183,7 +183,7 @@ function prepare () {
   };
 
   self.createCtx = function () {
-    var id = self.id;
+    var id = self.id; 
     if (id) {
       self.ctx = wx.createCanvasContext(id);
     } else {
@@ -609,8 +609,8 @@ function methods () {
   var y = ref.y; if ( y === void 0 ) y = 0;
   var width = ref.width; if ( width === void 0 ) width = boundWidth;
   var height = ref.height; if ( height === void 0 ) height = boundHeight;
-
   self.updateCanvas = function () {
+    console.log(self.croperTarget)
     if (self.croperTarget) {
       //  画布绘制图片
       self.ctx.drawImage(self.croperTarget, self.imgLeft, self.imgTop, self.scaleWidth, self.scaleHeight);
@@ -622,7 +622,7 @@ function methods () {
     return self
   };
 
-  self.pushOrign = function (src) {
+  self.pushOrign = function (src) { 
     self.src = src;
 
     isFunction(self.onBeforeImageLoad) && self.onBeforeImageLoad(self.ctx, self);
@@ -652,6 +652,7 @@ function methods () {
         self.scaleHeight = self.baseHeight;
 
         self.updateCanvas();
+        console.log('done')
 
         isFunction(self.onImageLoad) && self.onImageLoad(self.ctx, self);
       }

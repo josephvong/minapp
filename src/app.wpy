@@ -31,8 +31,8 @@ import {kachaAuthApi} from 'api/kachaAuthApi/index'
 export default class extends wepy.app {
   config = {
     pages: [
-      //'pages/welcome',
-      //'pages/txtsearch/index',
+      'pages/welcome',
+      'pages/txtsearch/index',
       'pages/imgsearch/index',
       //'pages/game',
       //

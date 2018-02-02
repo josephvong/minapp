@@ -30,9 +30,10 @@ module.exports = {
     stylus:{
       compress: true
     },
-    /*sass: {
+    sass: {
+      //compress: true
       outputStyle: 'compressed'
-    },*/
+    },
     babel: {
       sourceMap: true,
       presets: [
