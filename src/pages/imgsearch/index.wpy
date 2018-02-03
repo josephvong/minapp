@@ -2,12 +2,18 @@
 <template>
   <view class="img-search-page"> 
     <!-- <view @tap="imgUpload" class="preview-img" style="background-image:url({{searchUrl}})"></view> -->
-    <image class="preview-img" src="{{searchUrl}}"></image>
+    <image mode="aspectFit" class="preview-img" src="{{searchUrl}}"></image>
     <view @tap="imgUpload" class="re-upload" >重新选择图片</view>
-    <view class="tost" @tap="tostShow">test</view>
+
     <view class="result-wrap">
-      <Toast />
+      <view class="fail-notic" style="display:{{failNotic?'none':'block'}}">{{failNotic}}</view> <!--  -->
+      <ul class="result-list" wx:if="{{resultList.length}}" > 
+        <repeat for="{{resultList}}" key="index" index="index" item="item"> 
+          <listItem :itemData="item"></listItem> 
+        </repeat> 
+      </ul>
     </view>
+
     <wepyCropper :params.sync="clipParams"></wepyCropper>
   </view>
 </template>
@@ -15,7 +21,7 @@
 <script>
   import wepy from 'wepy'  
   import wepyCropper from 'wepy-cropper';
-  import Toast from 'wepy-com-toast'
+  import listItem from 'components/listItem/index' 
   import {imgFileUpload, imgUrlSend, imgWineResult, recurImgSearch} from 'api/imgSearchApi/index'  // 拍照搜索数据接口函数
   export default class imgSearch extends wepy.page {
     config = {
@@ -24,7 +30,7 @@
 
     components = {
       wepyCropper,
-      Toast
+      listItem
     }
 
     //mixins = [testMixin]
@@ -36,8 +42,11 @@
         mode:"rectangle", //默认rectangle 'quadrangle'并不返回图片，只返回在图片中的四个点，用于perspective correction
         sizeType:["compressed"],//数组,选填 ['original', 'compressed'], 默认original
       }, 
-      searchUrl:''   // 裁剪后的图片链接（tmp图片）
+      searchUrl:'',   // 裁剪后的图片链接（tmp图片）
 
+     
+      failNotic:'',
+      resultList:[]
     }
 
     computed = {
@@ -63,26 +72,42 @@
         })
       },
 
-      async uploadSend(imgUrl){
+      async uploadSend(imgUrl,module){
         let staticUrl,searchId;
-        try{ staticUrl = await imgFileUpload(imgUrl) }catch(e){ console.log('错误:'+ e) }
-        try{ searchId = await imgUrlSend(staticUrl) }catch(e){ console.log('错误:'+ e) } 
+        let This = module
+        wepy.showLoading({ title:'搜索结果中'}) // 开启loading
+        
+        try{ staticUrl = await imgFileUpload(imgUrl) }catch(err){
+          wepy.hideLoading()
+          This.failNotic = err
+          This.$apply()  
+          console.log('错误:'+ err) 
+        }
+        try{ searchId = await imgUrlSend(staticUrl) }catch(err){
+          wepy.hideLoading()
+          This.failNotic = err
+          This.$apply()  
+          console.log('错误:'+ err) 
+        } 
          
         recurImgSearch(searchId).then((res)=>{
-          console.log(res) 
+          console.log(res.wine_list) 
+          wepy.hideLoading()
+          This.resultList = res.wine_list
+          This.$apply() 
         }).catch((err)=>{
-          console.log(err)
-        })    
+          wepy.hideLoading()
+          This.failNotic = err  
+          This.$apply()  
+        })
+           
       },
 
       tostShow(){
-        let promise = this.$invoke('toast', 'show', {
-          title: '自定义标题',
-          img: 'https://raw.githubusercontent.com/kiinlam/wetoast/master/images/star.png'
-        })
-
-        promise.then((d) => {
-          console.log('toast done')
+        wepy.showLoading({
+          title:'搜索结果', 
+        }).then(()=>{
+          console.log('ccc')
         })
       } 
 
@@ -90,16 +115,14 @@
 
     watch = {
       searchUrl(newVal){ 
-        this.methods.uploadSend(newVal)
+        this.methods.uploadSend(newVal,this)
          
       }
     }
 
     events = {
       wepyCropperFinsh(path){ 
-        this.searchUrl = path
-        
-        //this.methods.uploadSend(this.searchUrl)
+        this.searchUrl = path 
         this.$apply();
       }
     }
@@ -130,14 +153,13 @@
   color black
   .preview-img
     display block
-    width 40%
-    height 300rpx
+    width 50%
+    height 400rpx
     margin 0 auto
-    //border-radius 10rpx
-    /*border 1rpx solid gray//#f7f7f7
-    background no-repeat
-    background-position center center
-    background-size contain*/
+    padding 10rpx
+    border 1px solid gray
+    border-radius 10rpx
+     
   .re-upload
     display block
     width 40%
@@ -149,6 +171,11 @@
     font-weight 700
     color white
     border-radius 30rpx
-    background red    
- 
+    background red
+  .result-wrap
+    width 100%
+    padding 20rpx    
+    .result-list
+      display block
+      background #f7f7f7
 </style>

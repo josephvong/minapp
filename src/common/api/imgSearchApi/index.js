@@ -86,7 +86,7 @@ export function imgUrlSend(img_url){
 // 图片Id 获取酒款的 接口： 上传 图片id，
 export function imgWineResult(imgId){ 
   let auth = authObj()  
-  let data = {ims_id:imgId, ...auth } 
+  let data = {ims_id:imgId, response_type:'html', ...auth } 
 
   return wepy.request({
     url:'https://ims.9kacha.com/api/qsearch_res.php',
@@ -122,13 +122,12 @@ export function recurImgSearch(imgId){ // 递归 访问接口
       if(times>4){ Rej('超时');  return }
       setTimeout(()=>{
         imgWineResult(Id).then((res)=>{
-          times += 1  // 访问成功，times +1
-          console.log(res)
+          times += 1  // 访问成功，times +1 
           if( res.jsonData &&  !res.jsonData.length && !res.jsonData.status){
             //This.findingTime = times   // 输出 第 n 次 遍历号
             getData(imgId)  //递归
-          }else if(res.status===10001){
-            Rej('无结果')
+          }else if(res.status===0 && res.jsonData && res.jsonData.status=="1"){ 
+            Rej(res.jsonData.description)
             //This.resultLoad = false;   // 递归结束 结果loading 隐藏
           }else if(res.status===0 && res.jsonData && res.jsonData.status=="0" && res.jsonData.wine_list.length){
 
