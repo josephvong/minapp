@@ -33,10 +33,7 @@ export default class extends wepy.app {
     pages: [
       'pages/welcome',
       'pages/txtsearch/index',
-      'pages/imgsearch/index',
-      //'pages/game',
-      //
-      //'pages/index',
+      'pages/imgsearch/index'
     ],
     window: {
       backgroundTextStyle: 'light',

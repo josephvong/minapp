@@ -10,7 +10,7 @@ const authObj = function(){
   let kachaUser = wepy.getStorageSync('UserInfo').kachaUserInfo;
   return {
     //authmode:'user',
-    open_id:kachaUser.user_id,
+    openid:kachaUser.user_id,
     session_id:kachaUser.session_id
     //authparams:JSON.stringify(kachaUser)  
   } 
@@ -21,9 +21,9 @@ export function imgFileUpload(url){
   let auth = authObj()
   let data ={
     "type":"image",
-    "user_id":auth.open_id,
+    "user_id":auth.openid,
     "session_id":auth.session_id
-  }
+  } 
   return new Promise((resolve,reject)=>{
     wepy.uploadFile({
       url: 'https://fs.9kacha.com/upload.php',
@@ -31,11 +31,10 @@ export function imgFileUpload(url){
       name: 'media',
       header: { 'content-type': 'json' },
       formData: { jparams:JSON.stringify(data) },
-    }).then((res)=>{  
+    }).then((res)=>{ 
       if(res && res.statusCode==200){
         let data = JSON.parse(res.data)
-        if(!data.status ){
-          //console.log(data)
+        if(!data.status && data.url ){ 
           //return Promise.resolve(data.url)
           resolve(data.url)
         }else{
@@ -53,35 +52,41 @@ export function imgFileUpload(url){
 
 // 图片上传 接口： 上传 图片 base64， 获取 结果酒款ID
 export function imgUrlSend(img_url){
-  let auth = authObj() 
-  console.log(auth) 
-  let data = {img_url:img_url, response_type:'',...auth}
+  let auth = authObj()  
+  let data = {img_url:img_url, response_type:'html',...auth}
   
-  return wepy.request({
-    url:'https://ims.9kacha.com/api/search.php',
-    data:{
-      jparams:JSON.stringify(data), 
-      
-    },
-    ...requestHeader
-  }).then((res)=>{ //数据链接成功
-    if(res.data){
-      if(res.data.status==0 && res.data.description =="ok"){
-       return Promise.resolve(res.data)
+  return new Promise((resolve,reject)=>{
+    wepy.request({
+      url:'https://ims.9kacha.com/api/search.php',
+      data:{
+        jparams:JSON.stringify(data),  
+      },
+      ...requestHeader
+    }).then((res)=>{ //数据链接成功 
+      if(res && res.statusCode==200){
+        let data = res.data
+        if(data){
+          if(data.status==0 && data.ims_id){
+            //return Promise.resolve(res.data)
+            resolve(data.ims_id)
+          }else{
+            //return Promise.reject('图片格式错误')
+            reject('图片格式错误')
+          }
+        }
       }else{
-        return Promise.reject('图片格式错误')
+        //return Promise.reject('图片链接解析失败')
+        reject('图片链接解析失败')
       }
-    }
-  }).catch((err)=>{  // 后端 处理不了图片 的 失败回调函数
-    return Promise.reject('图片链接解析失败')
-  })
+    })
+  }) 
 }
 
 
 // 图片Id 获取酒款的 接口： 上传 图片id，
 export function imgWineResult(imgId){ 
   let auth = authObj()  
-  let data = {ims_id:imgId,response_type:'html', ...auth } 
+  let data = {ims_id:imgId, ...auth } 
 
   return wepy.request({
     url:'https://ims.9kacha.com/api/qsearch_res.php',
@@ -90,10 +95,52 @@ export function imgWineResult(imgId){
     },
     ...requestHeader
   }).then((res)=>{ //数据链接成功
-     return Promise.resolve(res.data)
-  }).catch((err)=>{
-    return '网络连接异常'
-  })
+    if(res && res.statusCode==200){
+      let data = res.data
+      if(data){
+        if(data.status==0 ){
+          return Promise.resolve(data)
+          //resolve(data.ims_id)
+        }else{
+          return Promise.reject('图片格式错误')
+          //reject('图片数据错误')
+        }
+      }
+    }else{
+      return Promise.reject('图片链接解析失败')
+      //reject('搜索网络异常')
+    }  
+  }) 
 }
 
+  // 使用 s_id 递归 访问 接口 获取结果
+export function recurImgSearch(imgId){ // 递归 访问接口
+  //let This = this;
+  return new Promise(function(Res,Rej){   // 输出一个 promise 对象
+    let times = 0;  // 访问次数 值
+    function getData(Id){
+      if(times>4){ Rej('超时');  return }
+      setTimeout(()=>{
+        imgWineResult(Id).then((res)=>{
+          times += 1  // 访问成功，times +1
+          console.log(res)
+          if( res.jsonData &&  !res.jsonData.length && !res.jsonData.status){
+            //This.findingTime = times   // 输出 第 n 次 遍历号
+            getData(imgId)  //递归
+          }else if(res.status===10001){
+            Rej('无结果')
+            //This.resultLoad = false;   // 递归结束 结果loading 隐藏
+          }else if(res.status===0 && res.jsonData && res.jsonData.status=="0" && res.jsonData.wine_list.length){
+
+            Res(res.jsonData)  // 返回搜索结果
+            //This.resultLoad = false;   // 递归结束 结果loading 隐藏
+          }
+        }).catch((err)=>{
+          Rej(err);
+        })
+      },2000)  //  定义一个递归函数
+    }
+    getData(imgId)  // 执行递归函数，在递归函数过程中，根据不同的状态 调用 Res() 和 Rej（）
+  })
+}
  

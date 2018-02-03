@@ -1,8 +1,12 @@
 
 <template>
   <view class="img-search-page"> 
-    <view @tap="imgUpload" class="preview-img" style="background-image:url({{searchUrl}})">
-      
+    <!-- <view @tap="imgUpload" class="preview-img" style="background-image:url({{searchUrl}})"></view> -->
+    <image class="preview-img" src="{{searchUrl}}"></image>
+    <view @tap="imgUpload" class="re-upload" >重新选择图片</view>
+    <view class="tost" @tap="tostShow">test</view>
+    <view class="result-wrap">
+      <Toast />
     </view>
     <wepyCropper :params.sync="clipParams"></wepyCropper>
   </view>
@@ -11,14 +15,16 @@
 <script>
   import wepy from 'wepy'  
   import wepyCropper from 'wepy-cropper';
-  import {imgFileUpload, imgUrlSend, imgWineResult} from 'api/imgSearchApi/index'  // 拍照搜索数据接口函数
+  import Toast from 'wepy-com-toast'
+  import {imgFileUpload, imgUrlSend, imgWineResult, recurImgSearch} from 'api/imgSearchApi/index'  // 拍照搜索数据接口函数
   export default class imgSearch extends wepy.page {
     config = {
       navigationBarTitleText: '酒标搜索' 
     }
 
     components = {
-      wepyCropper
+      wepyCropper,
+      Toast
     }
 
     //mixins = [testMixin]
@@ -29,10 +35,8 @@
         src:'', //字符串, 图片path 必填
         mode:"rectangle", //默认rectangle 'quadrangle'并不返回图片，只返回在图片中的四个点，用于perspective correction
         sizeType:["compressed"],//数组,选填 ['original', 'compressed'], 默认original
-      },
-
-      chooseImg:null,
-      searchUrl:''
+      }, 
+      searchUrl:''   // 裁剪后的图片链接（tmp图片）
 
     }
 
@@ -60,19 +64,34 @@
       },
 
       async uploadSend(imgUrl){
-        let staticUrl = null;
-        //staticUrl = await imgFileUpload(imgUrl) 
-        return await imgFileUpload(imgUrl) 
-      }, 
-      
+        let staticUrl,searchId;
+        try{ staticUrl = await imgFileUpload(imgUrl) }catch(e){ console.log('错误:'+ e) }
+        try{ searchId = await imgUrlSend(staticUrl) }catch(e){ console.log('错误:'+ e) } 
+         
+        recurImgSearch(searchId).then((res)=>{
+          console.log(res) 
+        }).catch((err)=>{
+          console.log(err)
+        })    
+      },
+
+      tostShow(){
+        let promise = this.$invoke('toast', 'show', {
+          title: '自定义标题',
+          img: 'https://raw.githubusercontent.com/kiinlam/wetoast/master/images/star.png'
+        })
+
+        promise.then((d) => {
+          console.log('toast done')
+        })
+      } 
 
     } 
 
     watch = {
       searchUrl(newVal){ 
-        //let staticImage = await this.methods.uploadSend(newVal)
-        let staticImage = this.methods.uploadSend(newVal)
-        console.log(this.methods.uploadSend(newVal))
+        this.methods.uploadSend(newVal)
+         
       }
     }
 
@@ -86,6 +105,7 @@
     }
 
     onLoad() {
+      //console.log(Toast)
       let chooseImg = new Promise((resolve,reject)=>{
         wx.chooseImage({
             count: 1, // 默认9
@@ -109,14 +129,26 @@
 .img-search-page
   color black
   .preview-img
-    width 50%
-    height 0
-    padding-top 60%
+    display block
+    width 40%
+    height 300rpx
     margin 0 auto
-    border-radius 10rpx
-    border 1rpx solid #f7f7f7
+    //border-radius 10rpx
+    /*border 1rpx solid gray//#f7f7f7
     background no-repeat
     background-position center center
-    background-size contain      
+    background-size contain*/
+  .re-upload
+    display block
+    width 40%
+    height 60rpx
+    line-height 60rpx
+    margin 30rpx auto
+    text-align center
+    font-size 28rpx
+    font-weight 700
+    color white
+    border-radius 30rpx
+    background red    
  
 </style>
