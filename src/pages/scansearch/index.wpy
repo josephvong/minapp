@@ -1,0 +1,228 @@
+
+<template>
+  <view class="scan-search-page"> 
+    <camera class="full-screen-cam {{cameraShow?'':'hide'}}" device-position="back" flash="off" @error="cameraError"   > 
+      <cover-view class="file-btn  {{cameraShow?'show':''}}" @tap="choosePhoto">上传图片</cover-view> 
+      <cover-view class="camera-btn {{cameraShow?'show':''}}"  @tap="takePhoto" ></cover-view> 
+    </camera>
+
+    <image mode="aspectFit" class="preview-img" src="{{searchUrl}}"></image>
+    <view @tap="openCamera" class="re-upload" >重新选择图片</view>
+
+    <view class="result-wrap">
+      <view class="fail-notic" style="display:{{failNotic?'block':'none'}}">
+      搜索结果为0，搜索请求信息：{{failNotic}}
+      </view>
+      <ul class="result-list" wx:if="{{resultList.length}}" > 
+        <repeat for="{{resultList}}" key="index" index="index" item="item"> 
+          <listItem :itemData="item"></listItem> 
+        </repeat> 
+      </ul>
+    </view>
+
+   <wepyCropper :params.sync="clipParams"></wepyCropper> 
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import wepyCropper from 'wepy-cropper'
+  import listItem from 'components/listItem/index' 
+  import {imgFileUpload, imgUrlSend, imgWineResult, recurImgSearch} from 'api/imgSearchApi/index'  // 拍照搜索数据接口函数  
+  export default class scanSearch extends wepy.page {
+    config = {
+      navigationBarTitleText: '扫描酒标' 
+    }
+
+    components = {
+      wepyCropper,
+      listItem 
+    }
+
+    //mixins = [testMixin]
+
+    data = { 
+      cameraShow:true,
+
+      clipParams:{ // 切图控件 参数 
+        src:'',  
+        mode:"rectangle",   
+        sizeType:["compressed"], 
+      },
+
+      searchUrl:'',   // 裁剪后的图片链接（tmp图片）
+      failNotic:'',
+      resultList:[] 
+    }
+
+    computed = {
+       
+    } 
+
+    methods = { 
+      takePhoto() {  // 拍照 事件函数 
+        let takePhotoPromise = new Promise((resolve,reject)=>{
+          const ctx = wepy.createCameraContext()
+          ctx.takePhoto({
+            quality: 'high',
+            success:(res) => {resolve(res)},
+            fail:(err)=>{reject(err)}    
+          }) 
+        }) 
+        takePhotoPromise.then((res)=>{  
+          this.cameraShow = false
+          this.clipParams.src= res.tempImagePath;
+          this.$apply() 
+        }).catch((err)=>{
+          console.log(err)
+        }) 
+      },
+      
+      choosePhoto(){  // 选择手机图片
+        let chooseImgPromise = new Promise((resolve,reject)=>{
+          wx.chooseImage({
+            count: 1, // 默认9
+            sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+            sourceType: ['album'], // 可以指定来源是相册还是相机，默认二者都有
+            success(res) { 
+              resolve(res.tempFilePaths[0]);
+            }
+          }) 
+        })
+        chooseImgPromise.then((path)=>{
+          this.cameraShow = false;
+          this.clipParams.src= path;
+          this.$apply(); 
+        })
+      },
+
+      cameraError(e) {  // 相机组件 错误捕获
+        console.log(e.detail)
+      },
+
+      openCamera(){
+        if(!this.cameraShow){
+          this.cameraShow = true
+        } 
+      },
+
+      async uploadSend(imgUrl,module){  //图片搜索 
+        let staticUrl,searchId;
+        let This = module
+        this.resultList = []
+        this.failNotic = ''
+        wepy.showLoading({ title:'搜索结果中'}) // 开启loading
+        
+        try{ staticUrl = await imgFileUpload(imgUrl) }catch(err){
+          wepy.hideLoading()
+          This.failNotic = err
+          This.$apply()  
+          console.log('错误:'+ err) 
+        }
+        try{ searchId = await imgUrlSend(staticUrl) }catch(err){
+          wepy.hideLoading()
+          This.failNotic = err
+          This.$apply()  
+          console.log('错误:'+ err) 
+        } 
+         
+        recurImgSearch(searchId).then((res)=>{
+          console.log(res.wine_list) 
+          wepy.hideLoading()
+          This.resultList = res.wine_list
+          This.$apply() 
+        }).catch((err)=>{
+          wepy.hideLoading()
+          This.failNotic = err  
+          This.$apply()  
+        })
+           
+      },
+    } 
+
+    watch = {
+      searchUrl(newVal){ 
+        this.methods.uploadSend(newVal,this)  
+      }
+    }
+
+    events = {
+      wepyCropperFinsh(path){ 
+        this.searchUrl = path 
+        this.$apply();
+      }
+    }
+
+    onLoad() {
+      
+    }
+  }
+</script>
+
+<style lang="stylus">
+.scan-search-page
+  color black
+  //--------相机组件--------
+  .full-screen-cam
+    position fixed
+    left 0
+    right 0
+    top 0
+    bottom 0
+    &.hide
+      transform translateY(-100%) 
+    .camera-btn
+      position relative
+      display inline-block 
+      width 120rpx
+      height 120rpx  
+      border-radius 60rpx 
+      background red
+      &.show
+        transform translateY(-150%) 
+    .file-btn
+      position relative
+      display inline-block
+      width 200rpx
+      height 120rpx
+      line-height 100rpx
+      margin-right 120rpx
+      font-size 40rpx
+      color white
+      font-weight 700
+      &.show
+        transform translateY(-150%)
+  //--------预览图--------
+  .preview-img
+    display block
+    width 50%
+    height 400rpx
+    margin 0 auto
+    padding 10rpx
+    border 1px solid gray
+    border-radius 10rpx
+  
+  //--------重拍按钮--------
+  .re-upload
+    display block
+    width 40%
+    height 60rpx
+    line-height 60rpx
+    margin 30rpx auto
+    text-align center
+    font-size 28rpx
+    font-weight 700
+    color white
+    border-radius 30rpx
+    background red
+    
+  //--------结果容器--------  
+  .result-wrap
+    width 100%
+    padding 20rpx
+    .fail-notic
+      text-align center    
+    .result-list
+      display block
+      background #f7f7f7 
+</style>

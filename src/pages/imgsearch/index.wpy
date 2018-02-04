@@ -6,7 +6,9 @@
     <view @tap="imgUpload" class="re-upload" >重新选择图片</view>
 
     <view class="result-wrap">
-      <view class="fail-notic" style="display:{{failNotic?'none':'block'}}">{{failNotic}}</view> <!--  -->
+      <view class="fail-notic" style="display:{{failNotic?'block':'none'}}">
+      搜索结果为0，搜索请求信息：{{failNotic}}
+      </view>
       <ul class="result-list" wx:if="{{resultList.length}}" > 
         <repeat for="{{resultList}}" key="index" index="index" item="item"> 
           <listItem :itemData="item"></listItem> 
@@ -75,6 +77,8 @@
       async uploadSend(imgUrl,module){
         let staticUrl,searchId;
         let This = module
+        this.resultList = []
+        this.failNotic = ''
         wepy.showLoading({ title:'搜索结果中'}) // 开启loading
         
         try{ staticUrl = await imgFileUpload(imgUrl) }catch(err){
@@ -103,13 +107,7 @@
            
       },
 
-      tostShow(){
-        wepy.showLoading({
-          title:'搜索结果', 
-        }).then(()=>{
-          console.log('ccc')
-        })
-      } 
+       
 
     } 
 
@@ -174,7 +172,9 @@
     background red
   .result-wrap
     width 100%
-    padding 20rpx    
+    padding 20rpx
+    .fail-notic
+      text-align center    
     .result-list
       display block
       background #f7f7f7

@@ -34,7 +34,8 @@ export default class extends wepy.app {
       //'pages/index',
       'pages/welcome',
       'pages/txtsearch/index',
-      'pages/imgsearch/index'
+      'pages/imgsearch/index',
+      'pages/scansearch/index'
     ],
     window: {
       backgroundTextStyle: 'light',

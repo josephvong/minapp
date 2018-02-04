@@ -53,7 +53,7 @@ export function imgFileUpload(url){
 // 图片上传 接口： 上传 图片 base64， 获取 结果酒款ID
 export function imgUrlSend(img_url){
   let auth = authObj()  
-  let data = {img_url:img_url, response_type:'html',...auth}
+  let data = {img_url:img_url, response_type:'data',...auth}
   
   return new Promise((resolve,reject)=>{
     wepy.request({
@@ -70,8 +70,9 @@ export function imgUrlSend(img_url){
             //return Promise.resolve(res.data)
             resolve(data.ims_id)
           }else{
+            console.log(data)
             //return Promise.reject('图片格式错误')
-            reject('图片格式错误')
+            reject(data.description)
           }
         }
       }else{
@@ -86,7 +87,7 @@ export function imgUrlSend(img_url){
 // 图片Id 获取酒款的 接口： 上传 图片id，
 export function imgWineResult(imgId){ 
   let auth = authObj()  
-  let data = {ims_id:imgId, response_type:'html', ...auth } 
+  let data = {ims_id:imgId, response_type:'data', ...auth } 
 
   return wepy.request({
     url:'https://ims.9kacha.com/api/qsearch_res.php',

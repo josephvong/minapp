@@ -46,9 +46,18 @@
       <!-- <image style="width:100%;" src="{{itemData.pic_url}}" alt=""></image> --> 
     </view>
     <view class="right-content"> 
-      <view class="title_cn" wx:if="itemData.name.name_ch">{{itemData.name.name_ch}}</view>
-      <view class="title_en" wx:if="itemData.name.name_en">{{itemData.name.name_en}}</view> 
-        
+      <view class="title_cn" wx:if="itemData.name.name_ch || itemData.name">
+      {{itemData.name.name_ch || itemData.name}}
+      </view>
+      <view class="title_en" wx:if="itemData.name.name_en || itemData.name_en">
+      {{itemData.name.name_en || itemData.name_en}}
+      </view>
+      <!-- <view class="title_cn" wx:if="wineName.name_ch">
+        {{wineName.name_ch}}
+      </view>
+      <view class="title_en" wx:if="wineName.name_en">
+        {{wineName.name_en}}
+      </view>  -->  
     </view>
    
   </view>
@@ -66,15 +75,34 @@
     } 
 
     data = {
-       
+      //wineName:{} 
     }
 
     computed = {
-       
+      /*wineNameInit(){
+        let wine_name = {};
+        if(this.itemData.name && typeof(this.itemData.name)=="object"){
+          wine_name = this.itemData.name
+        }else{
+          wine_name.name_ch = this.itemData.name
+          wine_name.name_en = this.itemData.name_en
+        }
+        return wine_name
+      }*/
     } 
 
     methods = {
-       
+      /*wineNameInit(){
+        let wine_name = {};
+        if(this.itemData.name && typeof(this.itemData.name)=="object"){
+          wine_name = this.itemData.name
+        }else{
+          wine_name.name_ch = this.itemData.name
+          wine_name.name_en = this.itemData.name_en
+        }
+        this.wineName = wine_name
+        this.$apply()
+      } */ 
     }
 
     events = {
@@ -90,7 +118,7 @@
     }
 
     onLoad() {
-       
+      //this.methods.wineNameInit()
     }
   }
 </script>
