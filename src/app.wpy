@@ -34,7 +34,8 @@ export default class extends wepy.app {
       'pages/welcome',
       'pages/txtsearch/index',
       'pages/imgsearch/index',
-      'pages/scansearch/index'
+      'pages/scansearch/index',
+      'pages/winedetail/index'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -93,7 +94,9 @@ export default class extends wepy.app {
       return userInfo
     }else{
       const loginData = await this.wxlogin();
-      const wxUserData = await this.getUserInfo(); 
+      ///console.log(loginData)
+      const wxUserData = await this.getUserInfo();
+      //console.log(wxUserData) 
       this.globalData.wxUserInfo = wxUserData.userInfo
       this.globalData.kachaUserInfo = await kachaAuthApi(loginData, wxUserData);
       

@@ -1,0 +1,71 @@
+
+<template>
+  <view class="wine-detail-page">
+    
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy' 
+  import {wineDetailApi} from 'api/wineDetailApi/index'
+  export default class wineDetail extends wepy.page {
+    config = {
+      navigationBarTitleText: '酒款信息' 
+    }
+
+    components = { 
+    }
+
+    //mixins = [testMixin]
+
+    data = {
+      wineInfo:{}
+    }
+
+    computed = {
+       
+    } 
+
+    methods = {
+       
+    }
+
+    events = {
+       
+    }
+
+    watch = {
+       
+    }
+
+    events = {
+       
+    }
+
+    onLoad() {  
+      wepy.showLoading({ title:'数据加载中...'})
+      this.wineInfo = this.$parent.globalData.selectWineInfo
+      wineDetailApi(this.wineInfo).then((res)=>{
+         wepy.hideLoading()
+         console.log(res)
+      })
+    }
+
+    onHide(){
+       
+    }
+
+    onUnload(){
+      this.$parent.globalData.selectWineInfo = null
+      console.log('detail page unload')
+    }
+  }
+</script>
+
+<style lang="stylus">
+.wine-detail-page
+  color black
+ 
+        
+            
+</style>

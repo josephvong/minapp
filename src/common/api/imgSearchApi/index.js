@@ -124,17 +124,16 @@ export function recurImgSearch(imgId){ // 递归 访问接口
       setTimeout(()=>{
         imgWineResult(Id).then((res)=>{
           times += 1  // 访问成功，times +1 
-          if( res.jsonData &&  !res.jsonData.length && !res.jsonData.status){
-            //This.findingTime = times   // 输出 第 n 次 遍历号
+          if( res.jsonData &&  !res.jsonData.length && !res.jsonData.status){ 
             getData(imgId)  //递归
           }else if(res.status===0 && res.jsonData && res.jsonData.status=="1"){ 
-            Rej(res.jsonData.description)
-            //This.resultLoad = false;   // 递归结束 结果loading 隐藏
+            Rej(res.jsonData.description) 
           }else if(res.status===0 && res.jsonData && res.jsonData.status=="0" && res.jsonData.wine_list.length){
-
-            Res(res.jsonData)  // 返回搜索结果
-            //This.resultLoad = false;   // 递归结束 结果loading 隐藏
-          }
+            console.log('ok')
+            Res(res.jsonData)  // 返回搜索结果 
+          }else{
+            Rej(err)
+          } 
         }).catch((err)=>{
           Rej(err);
         })

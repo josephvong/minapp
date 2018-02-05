@@ -6,7 +6,7 @@
       <view class="userinfo-nickname">欢迎您 {{userInfo.nickName}}</view> 
       <view class="enter-btn" @tap="routerGo('txtsearch')">文字搜索</view>
       <view class="enter-btn" @tap="routerGo('imgsearch')">酒标搜索</view>
-      <view class="enter-btn" @tap="routerGo('scansearch')">扫描酒标</view>
+      <view class="enter-btn" @tap="routerGo('scansearch')">扫描酒标</view> 
     </view>
    
   </view>

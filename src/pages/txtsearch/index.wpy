@@ -20,7 +20,7 @@
         <ul wx:if="{{historyList.length}}" class="word-list">
           <li wx:for="{{historyList}}" wx:key="index">
             <span @tap="searchWordSend({{item}})" class="content">{{item}}</span>
-            <icon @tap="deleteHistoryWord({{item}})" class="delete-item" type="cancel" size="20" color="#BDBDBD" />
+            <icon @tap="deleteHistoryWord({{item}})" class="delete-item" type="cancel" size="24" color="#BDBDBD" />
           </li>
            
         </ul>
@@ -39,7 +39,7 @@
       <scroll-view class="result-list-wrap" scroll-y @scrolltolower="listLoadMore"> 
         <ul class="result-list" wx:if="{{resultList.length}}" > 
           <repeat for="{{resultList}}" key="index" index="index" item="item"> 
-            <listItem :itemData="item"></listItem> 
+            <listItem :itemData="item"  @wineItemTap.user="goWineDetail"></listItem> 
           </repeat> 
         </ul>
         <view class="list-bottom">
@@ -57,6 +57,7 @@
   import wepy from 'wepy' 
   import inputTool from 'base/inputTool/index'
   import listItem from 'components/listItem/index'
+  import {txtItemDataInit} from 'components/listItem/dataInit'
 
   import {searchHisSave, searchHisDelete, searchHisSaveLoad} from './search_history.js' 
   import {hotWordApi,relateWordApi,resultListApi} from 'api/txtSearchApi/index'
@@ -133,8 +134,9 @@
           pageIndex:this.pageIndex
         }).then((res)=>{
           if(res.length){
-            let tempArr = []
-            tempArr = res
+            let tempArr = res.map((item)=>{ // 列表数据过滤
+              return txtItemDataInit(item)
+            }) 
             this.resultList = this.resultList.concat(tempArr) 
           }else{
             this.listEnd = true
@@ -153,6 +155,11 @@
           this.resultShow = false
           this.suggestWordList = []
         } 
+      },
+
+      goWineDetail(wine_info){
+        this.$parent.globalData.selectWineInfo = wine_info 
+        this.$navigate({ url:`../winedetail/index?wine_id=${wine_info.wine_id}`})
       },
 
       //--------------数据变化处理函数----------
@@ -174,7 +181,11 @@
       }, 
       getResultList(info,module){
         resultListApi(info).then((res)=>{
-          module.resultList = res
+          let settleList = res.map((item)=>{ // 列表数据过滤
+            return txtItemDataInit(item)
+          })
+          console.log(settleList)
+          module.resultList = settleList
           if(res.length<10){
             module.listEnd = true
           }
@@ -245,7 +256,7 @@
           margin-left 20rpx
           margin-bottom 20rpx
           padding 0 15rpx
-          line-height 60rpx
+          line-height 70rpx
           font-size 24rpx 
           border 1rpx solid #aeaeae
           border-radius 5rpx

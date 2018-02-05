@@ -3,6 +3,10 @@
   display:block;
   padding 20rpx  
   background white
+  &.precise
+    background linear-gradient(to right,#F99E79,#D0365C)
+    .title_cn,.title_en,.desc
+      color white 
   .item-wrap
     display flex
     align-items center
@@ -26,12 +30,18 @@
       over-flow hidden 
       .title_cn
         line-height 36rpx
-        font-size 32rpx
+        font-size 30rpx
         font-weight 700
         over-flow hidden
       .title_en
         line-height 30rpx
-        font-size 28rpx
+        font-size 26rpx
+      .desc
+        margin-top 10rpx
+        font-size 24rpx
+        color #b1b1b1
+        /*span
+          margin 0 4rpx*/
         
       
       
@@ -39,25 +49,26 @@
 </style>
 
 <template>
-<li class="list-item">
-  <view class="item-wrap">
+<li class="list-item {{listType=='img' && listIndex==1 ? 'precise':''}}" @tap="itemTap" >
+  <view class="item-wrap" >
     <view class="left-icon" style="background-image:url('{{itemData.pic_url}}')"
     >
       <!-- <image style="width:100%;" src="{{itemData.pic_url}}" alt=""></image> --> 
     </view>
     <view class="right-content"> 
-      <view class="title_cn" wx:if="itemData.name.name_ch || itemData.name">
-      {{itemData.name.name_ch || itemData.name}}
+      <view class="title_cn" wx:if="itemData.name_ch">
+      {{itemData.name_ch}}
       </view>
-      <view class="title_en" wx:if="itemData.name.name_en || itemData.name_en">
-      {{itemData.name.name_en || itemData.name_en}}
+      <view class="title_en" wx:if="itemData.name_en">
+      {{itemData.name_en}}
       </view>
-      <!-- <view class="title_cn" wx:if="wineName.name_ch">
-        {{wineName.name_ch}}
-      </view>
-      <view class="title_en" wx:if="wineName.name_en">
-        {{wineName.name_en}}
-      </view>  -->  
+      <view class="desc">
+        <span>{{itemData.country}} </span>
+        <span style="display:{itemData.region?'inline-block':'none'}}">> {{itemData.region}}</span>
+        <span style="display:{{itemData.sub_region?'inline-block':'none'}}">> {{itemData.sub_region}}</span>
+        |
+        <em>{{itemData.year}}</em>
+      </view> 
     </view>
    
   </view>
@@ -68,41 +79,37 @@
   import wepy from 'wepy'  
   export default class listItem extends wepy.component {
     props = {
-      itemData:{}
+      itemData:{},
+      listIndex:{
+        type:Number,
+        default:0
+      },
+      listType:{
+        type:String,
+        default:''
+      }
     }
 
     components = { 
     } 
 
     data = {
-      //wineName:{} 
+       
     }
 
     computed = {
-      /*wineNameInit(){
-        let wine_name = {};
-        if(this.itemData.name && typeof(this.itemData.name)=="object"){
-          wine_name = this.itemData.name
-        }else{
-          wine_name.name_ch = this.itemData.name
-          wine_name.name_en = this.itemData.name_en
-        }
-        return wine_name
-      }*/
+       
     } 
 
     methods = {
-      /*wineNameInit(){
-        let wine_name = {};
-        if(this.itemData.name && typeof(this.itemData.name)=="object"){
-          wine_name = this.itemData.name
-        }else{
-          wine_name.name_ch = this.itemData.name
-          wine_name.name_en = this.itemData.name_en
-        }
-        this.wineName = wine_name
-        this.$apply()
-      } */ 
+      itemTap(){ 
+        this.$emit('wineItemTap',{
+          category:'wine',
+          wine_id:this.itemData.wine_id,
+          sign:this.itemData.sign,
+          year:this.itemData.year 
+        }) 
+      }
     }
 
     events = {

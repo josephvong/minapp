@@ -11,7 +11,7 @@
       </view>
       <ul class="result-list" wx:if="{{resultList.length}}" > 
         <repeat for="{{resultList}}" key="index" index="index" item="item"> 
-          <listItem :itemData="item"></listItem> 
+          <listItem :itemData="item" :listIndex="index+1" :listType="listType"></listItem> 
         </repeat> 
       </ul>
     </view>
@@ -23,7 +23,8 @@
 <script>
   import wepy from 'wepy'  
   import wepyCropper from 'wepy-cropper';
-  import listItem from 'components/listItem/index' 
+  import listItem from 'components/listItem/index'
+  import {imgItemDataInit} from 'components/listItem/dataInit' 
   import {imgFileUpload, imgUrlSend, imgWineResult, recurImgSearch} from 'api/imgSearchApi/index'  // 拍照搜索数据接口函数
   export default class imgSearch extends wepy.page {
     config = {
@@ -48,7 +49,9 @@
 
      
       failNotic:'',
-      resultList:[]
+      resultList:[],
+
+      listType:'img'
     }
 
     computed = {
@@ -56,7 +59,10 @@
     } 
 
     methods = { 
-      imgUpload(){ 
+      imgUpload(){
+        this.searchUrl = ''
+        this.clipParams.src= ''; 
+        
         let chooseImg = new Promise((resolve,reject)=>{
           wx.chooseImage({
               count: 1, // 默认9
@@ -69,6 +75,7 @@
           }) 
         })
         chooseImg.then((path)=>{
+
           this.clipParams.src= path;
           this.$apply(); 
         })
@@ -77,8 +84,11 @@
       async uploadSend(imgUrl,module){
         let staticUrl,searchId;
         let This = module
-        this.resultList = []
-        this.failNotic = ''
+        
+        This.resultList = []
+        This.failNotic = ''
+        This.$apply()
+
         wepy.showLoading({ title:'搜索结果中'}) // 开启loading
         
         try{ staticUrl = await imgFileUpload(imgUrl) }catch(err){
@@ -94,12 +104,17 @@
           console.log('错误:'+ err) 
         } 
          
-        recurImgSearch(searchId).then((res)=>{
-          console.log(res.wine_list) 
+        recurImgSearch(searchId).then((res)=>{  
           wepy.hideLoading()
-          This.resultList = res.wine_list
+          let tempList = res.wine_list.map((item)=>{
+            return imgItemDataInit(item)
+          })
+          console.log(tempList)
+          This.resultList = tempList
           This.$apply() 
         }).catch((err)=>{
+          //console.log('this catch')
+          //console.log(err)
           wepy.hideLoading()
           This.failNotic = err  
           This.$apply()  
@@ -112,8 +127,10 @@
     } 
 
     watch = {
-      searchUrl(newVal){ 
-        this.methods.uploadSend(newVal,this)
+      searchUrl(newVal){
+        if(newVal){
+          this.methods.uploadSend(newVal,this)
+        }
          
       }
     }
@@ -178,4 +195,7 @@
     .result-list
       display block
       background #f7f7f7
+      /*li.precise
+        background linear-gradient*/
+        
 </style>

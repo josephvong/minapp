@@ -4,30 +4,34 @@
     <camera class="full-screen-cam {{cameraShow?'':'hide'}}" device-position="back" flash="off" @error="cameraError"   > 
       <cover-view class="file-btn  {{cameraShow?'show':''}}" @tap="choosePhoto">上传图片</cover-view> 
       <cover-view class="camera-btn {{cameraShow?'show':''}}"  @tap="takePhoto" ></cover-view> 
-    </camera>
+    </camera> 
+ 
 
-    <image mode="aspectFit" class="preview-img" src="{{searchUrl}}"></image>
-    <view @tap="openCamera" class="re-upload" >重新选择图片</view>
+    <view class="content-wrap" style="opacity:{{searchUrl?1:0}}">
+      <image mode="aspectFit" class="preview-img" src="{{searchUrl}}"></image>
+      <view @tap="openCamera" class="re-upload" >重新选择图片</view>
 
-    <view class="result-wrap">
-      <view class="fail-notic" style="display:{{failNotic?'block':'none'}}">
-      搜索结果为0，搜索请求信息：{{failNotic}}
+      <view class="result-wrap">
+        <view class="fail-notic" style="display:{{failNotic?'block':'none'}}">
+        搜索结果为0，搜索请求信息：{{failNotic}}
+        </view>
+        <ul class="result-list" wx:if="{{resultList.length}}" > 
+          <repeat for="{{resultList}}" key="index" index="index" item="item"> 
+            <listItem :itemData="item" :listIndex="index+1" :listType="listType" ></listItem> 
+          </repeat> 
+        </ul>
       </view>
-      <ul class="result-list" wx:if="{{resultList.length}}" > 
-        <repeat for="{{resultList}}" key="index" index="index" item="item"> 
-          <listItem :itemData="item"></listItem> 
-        </repeat> 
-      </ul>
     </view>
 
-   <wepyCropper :params.sync="clipParams"></wepyCropper> 
+    <wepyCropper :params.sync="clipParams"></wepyCropper> 
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import wepyCropper from 'wepy-cropper'
-  import listItem from 'components/listItem/index' 
+  import listItem from 'components/listItem/index'
+  import {imgItemDataInit} from 'components/listItem/dataInit'   
   import {imgFileUpload, imgUrlSend, imgWineResult, recurImgSearch} from 'api/imgSearchApi/index'  // 拍照搜索数据接口函数  
   export default class scanSearch extends wepy.page {
     config = {
@@ -52,7 +56,9 @@
 
       searchUrl:'',   // 裁剪后的图片链接（tmp图片）
       failNotic:'',
-      resultList:[] 
+      resultList:[],
+
+      listType:'img' 
     }
 
     computed = {
@@ -106,11 +112,14 @@
         } 
       },
 
-      async uploadSend(imgUrl,module){  //图片搜索 
+      async uploadSend(imgUrl,module){  //图片搜索  
         let staticUrl,searchId;
         let This = module
-        this.resultList = []
-        this.failNotic = ''
+
+        This.resultList = []
+        This.failNotic = ''
+        This.$apply()
+
         wepy.showLoading({ title:'搜索结果中'}) // 开启loading
         
         try{ staticUrl = await imgFileUpload(imgUrl) }catch(err){
@@ -119,24 +128,29 @@
           This.$apply()  
           console.log('错误:'+ err) 
         }
+        //console.log('static:'+staticUrl)
         try{ searchId = await imgUrlSend(staticUrl) }catch(err){
           wepy.hideLoading()
           This.failNotic = err
           This.$apply()  
           console.log('错误:'+ err) 
-        } 
+        }
+        //console.log('s_id:'+searchId) 
          
-        recurImgSearch(searchId).then((res)=>{
-          console.log(res.wine_list) 
+        recurImgSearch(searchId).then((res)=>{ 
           wepy.hideLoading()
-          This.resultList = res.wine_list
+          let tempList = res.wine_list.map((item)=>{
+            return imgItemDataInit(item)
+          }) 
+          This.resultList =tempList 
           This.$apply() 
         }).catch((err)=>{
+
           wepy.hideLoading()
           This.failNotic = err  
           This.$apply()  
         })
-           
+            
       },
     } 
 
@@ -169,7 +183,7 @@
     right 0
     top 0
     bottom 0
-    &.hide
+    &.hide 
       transform translateY(-100%) 
     .camera-btn
       position relative
@@ -178,7 +192,7 @@
       height 120rpx  
       border-radius 60rpx 
       background red
-      &.show
+      &.show 
         transform translateY(-150%) 
     .file-btn
       position relative
@@ -192,6 +206,10 @@
       font-weight 700
       &.show
         transform translateY(-150%)
+  
+   
+
+
   //--------预览图--------
   .preview-img
     display block
