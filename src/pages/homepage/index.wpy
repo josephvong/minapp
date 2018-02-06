@@ -1,0 +1,114 @@
+
+<template>
+  <view class="home-page-wrap">
+    <view class="header-wrap" @tap="routerGo('txtsearch')">
+      <image class="bg-img" src="./new_bg@2x.png"></image> 
+      <view class="txt-search-btn">
+        <text>搜索任意葡萄酒...</text>
+        <icon class="icon" type="search" size="20" />
+      </view>
+    </view>
+    
+    <view class="img-search-btn"  @tap="routerGo('scansearch')">
+      拍照搜酒
+    </view>
+
+    <!-- <view class="userinfo">style="background-image:url({{require('common/assets/img/bg@2x.png')}})"
+      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}"></image>
+      <view class="userinfo-nickname">欢迎您 {{userInfo.nickName}}</view> 
+
+      <view class="enter-btn" @tap="routerGo('txtsearch')">文字搜索</view>
+      <view class="enter-btn" @tap="routerGo('imgsearch')">酒标搜索</view>
+      <view class="enter-btn" @tap="routerGo('scansearch')">扫描酒标</view> 
+    </view> -->
+   
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'  
+  export default class Welcome extends wepy.page {
+    config = {
+      navigationBarTitleText: 'test'
+    }
+    components = { 
+    }
+
+    //mixins = [testMixin]
+
+    data = {
+      userInfo:{
+        nickName: '加载中...',
+        isAuthed:false
+      }
+    }
+
+    computed = {
+       
+    } 
+
+    methods = {
+      routerGo(path){
+        if(this.isAuthed){
+          this.$navigate({ url:`../${path}/index` })
+        }  
+      }
+    }
+
+    events = {
+       
+    }
+
+    onLoad() {
+      let This = this
+      this.$parent.userAuth().then((res)=>{ 
+        this.userInfo = res.wxUserInfo
+        this.isAuthed = true
+        this.$apply()
+      }) 
+       
+    }
+  }
+</script>
+
+<style lang="stylus">
+.home-page-wrap
+  color black
+  .header-wrap
+    position relative
+    width 100%
+    height 0
+    padding-top 65.8%
+    .bg-img
+      position absolute
+      left 0
+      top 0
+      display block
+      width 100%
+      height 100%
+    .txt-search-btn
+      position absolute
+      display flex
+      align-items center
+      justify-content space-between
+      width 90%
+      height 110rpx
+      top 240rpx
+      left 5%
+      padding 0 40rpx
+      border-radius 20rpx
+      color #B2B2B2
+      background white
+  .img-search-btn
+    width 320rpx
+    height 100rpx
+    line-height 100rpx
+    margin 150rpx auto
+    border-radius 63rpx
+    font-size 38rpx
+    color white
+    text-align center
+    background linear-gradient(to right, #fe6263, #eb3738)
+    
+      
+</style>

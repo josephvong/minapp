@@ -17,7 +17,7 @@
         </view>
         <ul class="result-list" wx:if="{{resultList.length}}" > 
           <repeat for="{{resultList}}" key="index" index="index" item="item"> 
-            <listItem :itemData="item" :listIndex="index+1" :listType="listType" ></listItem> 
+            <listItem :itemData="item" :listIndex="index+1" :listType="listType" @wineItemTap.user="goWineDetail"></listItem> 
           </repeat> 
         </ul>
       </view>
@@ -152,6 +152,12 @@
         })
             
       },
+
+      goWineDetail(wine_info){
+        console.log(wine_info)
+        this.$parent.globalData.selectWineInfo = wine_info 
+        this.$navigate({ url:`../winedetail/index?wine_id=${wine_info.wine_id}`})
+      },
     } 
 
     watch = {
@@ -191,7 +197,7 @@
       width 120rpx
       height 120rpx  
       border-radius 60rpx 
-      background red
+      background #eb3738
       &.show 
         transform translateY(-150%) 
     .file-btn
@@ -199,7 +205,7 @@
       display inline-block
       width 200rpx
       height 120rpx
-      line-height 100rpx
+      line-height 120rpx
       margin-right 120rpx
       font-size 40rpx
       color white
@@ -232,7 +238,7 @@
     font-weight 700
     color white
     border-radius 30rpx
-    background red
+    background #eb3738
     
   //--------结果容器--------  
   .result-wrap

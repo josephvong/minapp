@@ -1,6 +1,71 @@
 
 <template>
   <view class="wine-detail-page">
+    <view class="wine-thumb-wrap">
+      <view class="left-thumb" style="background-image:url({{wineData.wlable_img}})"> 
+      </view>
+      <view class="right-describe">
+        <view class="name_cn">{{wineData.name_ch}}</view>
+        <view class="name_en">{{wineData.name_en}}</view>
+        <!-- <view class="year">年份: 1994</view> -->
+      </view>
+    </view>
+
+    <view class="style-desc-wrap" style="display:{{wineData.wineStyle.length?'block':'none'}}" > 
+      <view class="title">酒款风格</view>
+      <view class="style-name cn"> 
+        {{wineData.wineStyle[0].wstyle_ch}}
+      </view>
+      <view class="style-name en">
+        {{wineData.wineStyle[0].wstyle_en}}
+      </view> 
+      <view class="style-detail {{styleExp?'show':''}}">
+        {{wineData.wineStyle[0].wstyle_desc}}
+      </view>
+      <view class="express" @tap="styleExpToggle">{{styleExp?'收起':'更多'}}</view> 
+    </view>
+
+    <view class="property-wrap">
+      <view class="property-row">
+        <view class="name">酒类型:</view>
+        <view class="content">
+          <view>{{wineData.wine_type}}</view>
+          <view>{{wineData.sugar}}</view>
+        </view>
+      </view>
+      <view class="property-row">
+        <view class="name">产地:</view>
+        <view class="content">
+          <view>{{wineData.country}}</view>
+          <view wx:if="wineData.region">{{wineData.region}}</view>
+          <view wx:if="wineData.sub_region">{{wineData.sub_region}}</view>
+        </view>
+      </view>
+      <view class="property-row">
+        <view class="name">酒庄:</view>
+        <view class="content">
+          <view>{{wineData.winery}}</view> 
+        </view>
+      </view>
+      <view class="property-row" style="display:{{wineData.winery_level==''?'none':'flex'}}">
+        <view class="name">酒庄等级:</view>
+        <view class="content">
+          <view>{{wineData.winery_level}}</view> 
+        </view>
+      </view>
+      <view class="property-row" wx:if="wineData.grape_variety.length">
+        <view class="name">葡萄品种:</view>
+        <view class="content">
+          <view wx:for="{{wineData.grape_variety}}" wx:key="index">{{item}}</view> 
+        </view>
+      </view>
+      <view class="property-row" style="display:{{wineData.wine_desc==''?'none':'flex'}}">
+        <view class="name">酒品描述:</view>
+        <view class="content">
+          <view>{{wineData.wine_desc}}</view> 
+        </view>
+      </view>
+    </view>
     
   </view>
 </template>
@@ -19,7 +84,9 @@
     //mixins = [testMixin]
 
     data = {
-      wineInfo:{}
+      wineInfo:{}, // 调取接口的酒款信息
+      wineData:{}, // 获取到的酒款信息
+      styleExp:false,
     }
 
     computed = {
@@ -27,7 +94,9 @@
     } 
 
     methods = {
-       
+      styleExpToggle(){
+        this.styleExp = !this.styleExp
+      }
     }
 
     events = {
@@ -46,8 +115,10 @@
       wepy.showLoading({ title:'数据加载中...'})
       this.wineInfo = this.$parent.globalData.selectWineInfo
       wineDetailApi(this.wineInfo).then((res)=>{
-         wepy.hideLoading()
-         console.log(res)
+        this.wineData = res
+        wepy.hideLoading()
+        console.log(res)
+        this.$apply()
       })
     }
 
@@ -56,8 +127,7 @@
     }
 
     onUnload(){
-      this.$parent.globalData.selectWineInfo = null
-      console.log('detail page unload')
+      this.$parent.globalData.selectWineInfo = null 
     }
   }
 </script>
@@ -65,7 +135,89 @@
 <style lang="stylus">
 .wine-detail-page
   color black
- 
-        
-            
+  .wine-thumb-wrap
+    display flex
+    width 100%
+    height 400rpx
+    padding 20rpx
+    align-items center
+    flex-flow row no-wrap
+    .left-thumb
+      flex 0 0 30%
+      width 30%
+      height 100%
+      margin-right 20rpx
+      background no-repeat
+      background-position center center
+      background-size contain
+    .right-describe
+      flex 1
+      width auto
+      .name_cn
+        line-height 50rpx
+        font-size 38rpx
+        color #373737
+      .name_en
+        line-height 38rpx
+        font-size 24rpx
+        margin-bottom 20rpx
+        color #757575
+      .year
+        font-size 28rpx
+        color #757575  
+  .style-desc-wrap
+    position relative
+    padding 20rpx
+    border-top 20rpx solid #f5f5f5
+    padding-bottom 60rpx
+    .title
+      font-size 30rpx
+      color #c4c4c4
+      margin-bottom 5rpx
+    .style-name
+      line-height 48rpx
+      font-size 32rpx
+      &.cn
+        color black
+      &.en
+        color #757575
+    .style-detail
+      display: -webkit-box;
+      height 120rpx
+      font-size 28rpx
+      line-height 40rpx
+      overflow hidden
+      text-overflow: ellipsis;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical; 
+      p
+        text-indent 20rpx
+      &.show
+        display block
+        height auto
+        overflow auto
+    .express
+      position absolute
+      right 15rpx
+      bottom 10rpx
+      font-size 28rpx
+      color #4990ea
+  .property-wrap
+    font-size 28rpx
+    line-height 40rpx    
+    padding 20rpx
+    border-top 20rpx solid #f5f5f5
+    //border-bottom 20rpx solid #f5f5f5
+    .property-row
+      display flex
+      .name
+        flex 0 0 24%
+        width 20%
+        color #c4c4c4
+        margin-bottom 5rpx
+      .content
+        flex 1 1 auto
+        view
+          margin-bottom 10rpx
+                     
 </style>

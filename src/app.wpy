@@ -31,7 +31,7 @@ import {kachaAuthApi} from 'api/kachaAuthApi/index'
 export default class extends wepy.app {
   config = {
     pages: [ 
-      'pages/welcome',
+      'pages/homepage/index',
       'pages/txtsearch/index',
       'pages/imgsearch/index',
       'pages/scansearch/index',
@@ -57,12 +57,7 @@ export default class extends wepy.app {
   }
 
   onLaunch() {
-    wx.removeStorageSync("UserInfo")
-
-    /*this.userAuth().then((res)=>{
-      console.log('get success')
-      //wepy.setStorageSync("UserInfo",{res})
-    })*/
+    wx.removeStorageSync("UserInfo") 
   }
 
   wxlogin() {
