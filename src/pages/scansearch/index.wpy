@@ -9,7 +9,7 @@
       </camera>     
  
 
-    <view class="content-wrap" style="opacity:{{searchUrl?1:0}}">
+    <view class="content-wrap" style="opacity:{{cameraShow?0:1}}">
       <image mode="aspectFit" class="preview-img" src="{{searchUrl}}"></image>
       <view @tap="openCamera" class="re-upload" >重新选择图片</view>
 

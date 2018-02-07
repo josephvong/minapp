@@ -15,8 +15,10 @@
     <view class="img-search-btn"  @tap="routerGo('imgsearch')">
       图片搜酒
     </view>
+    <view class="img-search-btn"  @tap="routerGo('cardpage')">
+      卡片生成
+    </view> 
      
-     <text class="iconfont" style="color:red; font-size:60rpx">&#xe61d;</text> 
    
    
   </view>

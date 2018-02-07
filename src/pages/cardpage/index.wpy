@@ -1,0 +1,81 @@
+
+<template>
+  <view class="card-generate-page">
+    <button @tap="cardRender">render</button>
+    card page
+    <canvas canvas-id="cardRender"  style="display:none;width:{{canvasData.w}}px;height:{{canvasData.h}}px"></canvas>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  const IMG = 'https://staticfs2.9kacha.com/image/b1fa6124076bea67d428d05f2a4ccce8/thumb'  
+  export default class cardPage extends wepy.page {
+    config = {
+      navigationBarTitleText: '图片生成' 
+    }
+
+    components = { 
+    }
+
+    //mixins = [testMixin]
+
+    data = {
+      canvasData: {
+        w:1184,
+        h:1798
+      },
+
+    }
+
+    computed = {
+       
+    } 
+
+    methods = {
+      cardRender(){
+        let ctx = wx.createCanvasContext('cardRender')
+        wepy.getImageInfo({src:IMG}).then((res)=>{
+          console.log(res)
+        })
+        //var pat = ctx.createPattern('./card_bg_square.png',"repeat");
+         
+        /*ctx.drawImage('./card_detail_bg.png',0,0,375,80)
+        ctx.drawImage('./card_detail_bg.png',0,80,375,160)
+        ctx.drawImage('./card_detail_bg.png',0,240,375,240)
+        ctx.draw()*/ 
+      }
+    }
+
+    events = {
+       
+    }
+
+    watch = {
+       
+    }
+
+    events = {
+       
+    }
+
+    onLoad() {  
+      
+    }
+
+    onHide(){
+       
+    }
+
+    onUnload(){
+      
+    }
+  }
+</script>
+
+<style lang="stylus">
+.card-generate-page
+  color black
+ 
+                     
+</style>
