@@ -1,3 +1,11 @@
+<style>
+@import "common/style/icon/iconfont.wxss"
+#test{
+  width:10px;
+  height:10px;
+  background:blue;
+}
+</style>
 <style lang="less">
 view,ul,li {
   box-sizing: border-box;

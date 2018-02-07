@@ -39,11 +39,11 @@ export function imgFileUpload(url){
           resolve(data.url)
         }else{
           //return Promise.reject('数据获取失败')
-          reject('数据获取失败')
+          reject('静态图片数据获取失败')
         }
       }else{
        // return Promise.reject('网络请求失败')
-        reject('网络请求失败')
+        reject('临时图片上传请求失败')
       } 
     })
   }) 
@@ -124,7 +124,8 @@ export function recurImgSearch(imgId){ // 递归 访问接口
       setTimeout(()=>{
         imgWineResult(Id).then((res)=>{
           times += 1  // 访问成功，times +1 
-          if( res.jsonData &&  !res.jsonData.length && !res.jsonData.status){ 
+          if( res.jsonData &&  !res.jsonData.length && !res.jsonData.status){
+            console.log('轮询'+times) 
             getData(imgId)  //递归
           }else if(res.status===0 && res.jsonData && res.jsonData.status=="1"){ 
             Rej(res.jsonData.description) 

@@ -12,15 +12,12 @@
     <view class="img-search-btn"  @tap="routerGo('scansearch')">
       拍照搜酒
     </view>
-
-    <!-- <view class="userinfo">style="background-image:url({{require('common/assets/img/bg@2x.png')}})"
-      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}"></image>
-      <view class="userinfo-nickname">欢迎您 {{userInfo.nickName}}</view> 
-
-      <view class="enter-btn" @tap="routerGo('txtsearch')">文字搜索</view>
-      <view class="enter-btn" @tap="routerGo('imgsearch')">酒标搜索</view>
-      <view class="enter-btn" @tap="routerGo('scansearch')">扫描酒标</view> 
-    </view> -->
+    <view class="img-search-btn"  @tap="routerGo('imgsearch')">
+      图片搜酒
+    </view>
+     
+     <text class="iconfont" style="color:red; font-size:60rpx">&#xe61d;</text> 
+   
    
   </view>
 </template>

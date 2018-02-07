@@ -1,12 +1,10 @@
 
 <template>
   <view class="scan-search-page"> 
-      <camera class="full-screen-cam {{cameraShow?'':'hide'}}" device-position="back" flash="off" @error="cameraError" >
-        <cover-view class="ctl-wrap">
-          <cover-view class="file-btn  {{cameraShow?'':'hide'}}" @tap="choosePhoto">上传图片</cover-view>   
-          <cover-view class="camera-btn {{cameraShow?'':'hide'}}"  @tap="takePhoto" ></cover-view>
-        </cover-view> 
-      </camera>     
+    <camera class="full-screen-cam {{cameraShow?'':'hide'}}" device-position="back" flash="off" @error="cameraError"   > 
+      <cover-view class="file-btn  {{cameraShow?'show':''}}" @tap="choosePhoto">上传图片</cover-view> 
+      <cover-view class="camera-btn {{cameraShow?'show':''}}"  @tap="takePhoto" ></cover-view> 
+    </camera> 
  
 
     <view class="content-wrap" style="opacity:{{searchUrl?1:0}}">
@@ -18,7 +16,7 @@
         搜索结果为0，搜索请求信息：{{failNotic}}
         </view>
         <ul class="result-list" wx:if="{{resultList.length}}" > 
-          <repeat for="{{resultList}}" key="index" index="index" item="item">
+          <repeat for="{{resultList}}" key="index" index="index" item="item"> 
             <listItem :itemData="item" :listIndex="index+1" :listType="listType" @wineItemTap.user="goWineDetail"></listItem> 
           </repeat> 
         </ul>
@@ -67,11 +65,7 @@
        
     } 
 
-    methods = {
-      cameraHide(){
-        this.cameraShow = false
-      },  
-
+    methods = { 
       takePhoto() {  // 拍照 事件函数 
         let takePhotoPromise = new Promise((resolve,reject)=>{
           const ctx = wepy.createCameraContext()
@@ -187,49 +181,38 @@
 
 <style lang="stylus">
 .scan-search-page
-  color black 
+  color black
+  //--------相机组件--------
   .full-screen-cam
     position fixed
-    width 100%
-    height 100%
-    left 0%
-    top 0%
-    &.hide
-      width 1%
-      height 1%
-      left -1%
-      top -1%
-    .ctl-wrap
+    left 0
+    right 0
+    top 0
+    bottom 0
+    &.hide 
+      transform translateY(-100%) 
+    .camera-btn
       position relative
-      width 100%
-      height 200rpx
-      top 80% 
-      .camera-btn
-        position absolute
-        display block
-        left 50%
-        top 10% 
-        width 120rpx
-        height 120rpx
-        margin-left -60rpx  
-        border-radius 60rpx 
-        background #eb3738
-        &.hide
-          display none
-      .file-btn
-        position absolute
-        display inline-block
-        left 10%
-        top 10% 
-        height 120rpx
-        line-height 120rpx
-        //margin-right 120rpx
-        font-size 40rpx
-        color white
-        font-weight 700
-        background green
-        &.hide
-          display none
+      display inline-block 
+      width 120rpx
+      height 120rpx  
+      border-radius 60rpx 
+      background #eb3738
+      &.show 
+        transform translateY(-150%) 
+    .file-btn
+      position relative
+      display inline-block
+      width 200rpx
+      height 120rpx
+      line-height 120rpx
+      margin-right 120rpx
+      font-size 40rpx
+      color white
+      font-weight 700
+      &.show
+        transform translateY(-150%)
+  
    
 
 
