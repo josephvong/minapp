@@ -10,16 +10,12 @@
     </view>
     
     <view class="img-search-btn"  @tap="routerGo('scansearch')">
-      拍照搜酒
+      <text class="iconfont">&#xe603;</text> 拍照搜酒
     </view>
-    <view class="img-search-btn"  @tap="routerGo('imgsearch')">
+    <!-- <view class="img-search-btn"  @tap="routerGo('imgsearch')">
       图片搜酒
-    </view>
-    <view class="img-search-btn"  @tap="routerGo('cardpage')">
-      卡片生成
-    </view> 
-     
-   
+    </view>  -->
+      
    
   </view>
 </template>

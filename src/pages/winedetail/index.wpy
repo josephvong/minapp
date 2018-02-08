@@ -67,18 +67,26 @@
       </view>
     </view>
     
+    <view class="share-btn" @tap="renderCard">
+      分享
+    </view>
+    <cardRender></cardRender>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy' 
   import {wineDetailApi} from 'api/wineDetailApi/index'
+  import cardRender from 'components/cardRender/index'
+
+  const LOGO = './logo.png'
   export default class wineDetail extends wepy.page {
     config = {
       navigationBarTitleText: '酒款信息' 
     }
 
-    components = { 
+    components = {
+      cardRender 
     }
 
     //mixins = [testMixin]
@@ -96,6 +104,24 @@
     methods = {
       styleExpToggle(){
         this.styleExp = !this.styleExp
+      },
+
+      renderCard(){
+        let info = {
+          url:'',//this.wineData.wlable_img,
+          name_ch:this.wineData.name_ch,
+          name_en:this.wineData.name_en,
+          logo:LOGO
+        }
+        wepy.downloadFile({
+          url:this.wineData.wlable_img
+        }).then((res)=>{
+          console.log(res.tempFilePath)
+          info.url=res.tempFilePath
+          this.$invoke('cardRender','cardRender',info)
+        })
+        //this.$invoke('cardRender','cardRender',info)
+        
       }
     }
 
@@ -135,6 +161,7 @@
 <style lang="stylus">
 .wine-detail-page
   color black
+  padding-bottom 40rpx
   .wine-thumb-wrap
     display flex
     width 100%
@@ -219,5 +246,15 @@
         flex 1 1 auto
         view
           margin-bottom 10rpx
-                     
+  .share-btn
+    width 100rpx
+    height 100rpx
+    margin 0 auto
+    line-height 100rpx
+    font-size 28rpx
+    border-radius 50rpx
+    color white
+    text-align center
+    background red 
+                       
 </style>

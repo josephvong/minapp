@@ -3,7 +3,9 @@
   <view class="scan-search-page"> 
       <camera class="full-screen-cam {{cameraShow?'':'hide'}}" device-position="back" flash="off" @error="cameraError" >
         <cover-view class="ctl-wrap">
-          <cover-view class="file-btn  {{cameraShow?'':'hide'}}" @tap="choosePhoto">上传图片</cover-view>   
+          <cover-view class="file-btn  {{cameraShow?'':'hide'}}" @tap="choosePhoto">
+          <text class="iconfont">&#xe603;</text> 上传图片
+          </cover-view>   
           <cover-view class="camera-btn {{cameraShow?'':'hide'}}"  @tap="takePhoto" ></cover-view>
         </cover-view> 
       </camera>     
@@ -219,15 +221,15 @@
       .file-btn
         position absolute
         display inline-block
-        left 10%
+        left 5%
         top 10% 
         height 120rpx
         line-height 120rpx
         //margin-right 120rpx
-        font-size 40rpx
+        font-size 32rpx
         color white
-        font-weight 700
-        background green
+        //font-weight 700
+        //background green
         &.hide
           display none
    

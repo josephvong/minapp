@@ -81,6 +81,12 @@ if (prod) {
           quality: 80
         }
       }
-    }
+    },
+    autoprefixer: {
+      filter: /\.(wxss|css)$/,
+      config: {
+        browsers: ['last 11 iOS versions']
+      }
+    },
   }
 }

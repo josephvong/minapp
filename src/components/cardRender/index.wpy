@@ -1,23 +1,22 @@
 
 <template>
-  <view class="card-generate-page">
-    <button @tap="cardRender">render</button> 
-    <canvas canvas-id="cardRender"  style="display:block;width:{{canvasData.w}}px;height:{{canvasData.h}}px;border:1px solid red"></canvas>
-  </view>
+  <view style="position:fixed; top:-999px"> 
+    <canvas canvas-id="cardRender"  style=" width:{{canvasData.w}}px;height:{{canvasData.h}}px;"></canvas>
+  </view> 
 </template>
 
 <script>
-  import wepy from 'wepy'
-  const IMG = 'https://staticfs2.9kacha.com/image/b1fa6124076bea67d428d05f2a4ccce8/thumb'  
-  const LOGO = './logo.png'
+  import wepy from 'wepy'  
+  
+  //const IMG = 'https://staticfs2.9kacha.com/image/b1fa6124076bea67d428d05f2a4ccce8/thumb'  
+  //const LOGO = './logo.png'
   const MaxRange = 300
   const Margin = 10
  
-  export default class cardPage extends wepy.page {
-    config = {
-      navigationBarTitleText: '图片生成' 
-    }
-
+  export default class cardRender extends wepy.component { 
+    props = {
+       
+    } 
     components = { 
     }
 
@@ -59,50 +58,41 @@
         })
 
       },
-      stringCut(str,num){
-        let line = Math.floor(str.length/num)
-        return str.split('',line) 
-      },
-      async cardRender(){
-        let imgData = await this.methods.imgScalCalc(IMG)
+       
+      async cardRender(info){
+        
+        let imgData = await this.methods.imgScalCalc(info.url)
+        console.log(imgData)
         let canW = this.canvasData.w
         let canH = this.canvasData.h
         
         let ctx = wx.createCanvasContext('cardRender')
          
         ctx.setFillStyle('white')
-        ctx.fillRect(0,0,canW,canH)
-        //ctx.draw()
+        ctx.fillRect(0,0,canW,canH) 
          
-        ctx.drawImage(IMG,imgData.img_x,imgData.img_y,imgData.img_w,imgData.img_h)
-        //ctx.draw()
+        ctx.drawImage(info.url,imgData.img_x,imgData.img_y,imgData.img_w,imgData.img_h)
+         
 
         ctx.setFillStyle('black')
         ctx.setFontSize(16)
         ctx.setTextAlign('center')
         ctx.setTextBaseline('top') 
-        ctx.fillText('奔富酒庄Bin407赤霞珠红葡萄酒', canW/2, MaxRange + Margin*2)
+        ctx.fillText(info.name_ch, canW/2, MaxRange + Margin*2)
         ctx.setFontSize(14)
-        ctx.fillText('Penfolds Bin 407 Cabernet Sauvignon', canW/2, MaxRange + Margin*4)
-        ctx.drawImage(LOGO,(MaxRange/2-25)+Margin,MaxRange+Margin*7,50,50)
-        ctx.draw(false,()=>{
-          //console.log('cc')
+        ctx.fillText(info.name_en, canW/2, MaxRange + Margin*4)
+        ctx.drawImage(info.logo,(MaxRange/2-25)+Margin,MaxRange+Margin*7,50,50)
+        ctx.draw(false,()=>{ 
           wx.canvasToTempFilePath({
             x:0,
             y:0,
             canvasId:'cardRender',
             success: function(res) {
               console.log(res.tempFilePath)
+              wx.previewImage({urls:[res.tempFilePath]})
             }
           })
         })
-        /*setTimeout(()=>{
-          
-        },200)*/
-        /*function(){
-          
-        }*/
-        
       }
     }
 

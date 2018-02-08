@@ -72,12 +72,12 @@ export function imgUrlSend(img_url){
           }else{
             console.log(data)
             //return Promise.reject('图片格式错误')
-            reject(data.description)
+            reject('静态图片搜索id获取失败原因：'+ data.description)
           }
         }
       }else{
         //return Promise.reject('图片链接解析失败')
-        reject('图片链接解析失败')
+        reject('静态图片链接获取id时解析失败')
       }
     })
   }) 
@@ -103,12 +103,12 @@ export function imgWineResult(imgId){
           return Promise.resolve(data)
           //resolve(data.ims_id)
         }else{
-          return Promise.reject('图片格式错误')
+          return Promise.reject('通过id搜索时图片数据错误')
           //reject('图片数据错误')
         }
       }
     }else{
-      return Promise.reject('图片链接解析失败')
+      return Promise.reject('通过id搜索网络链接错误')
       //reject('搜索网络异常')
     }  
   }) 
