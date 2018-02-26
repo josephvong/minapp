@@ -24,6 +24,9 @@
             <listItem :itemData="item" :listIndex="index+1" :listType="listType" @wineItemTap.user="goWineDetail"></listItem> 
           </repeat> 
         </ul>
+        <view class="no-reault" wx:if="{{noResult}}"> 
+          <image src="./noresult.png" mode="widthFix"></image> 
+        </view>
       </view>
     </view>
 
@@ -61,6 +64,7 @@
       searchUrl:'',   // 裁剪后的图片链接（tmp图片）
       failNotic:'',
       resultList:[],
+      noResult:false, // 是否显示‘无结果’的flag
 
       listType:'img' 
     }
@@ -126,6 +130,7 @@
 
         This.resultList = []
         This.failNotic = ''
+        This.noResult = false
         This.$apply()
 
         wepy.showLoading({ title:'搜索结果中'}) // 开启loading
@@ -136,7 +141,7 @@
           This.$apply()  
           console.log('错误:'+ err) 
         }
-        //console.log('static:'+staticUrl)
+
         try{ searchId = await imgUrlSend(staticUrl) }catch(err){
           wepy.hideLoading()
           This.failNotic = err
@@ -147,15 +152,19 @@
          
         recurImgSearch(searchId).then((res)=>{ 
           wepy.hideLoading()
-          let tempList = res.wine_list.map((item)=>{
-            return imgItemDataInit(item)
-          }) 
-          This.resultList =tempList 
+          if(res.status=="0" && res.wine_list.length ){  // 成功并返回结果
+            let tempList = res.wine_list.map((item)=>{
+              return imgItemDataInit(item)
+            }) 
+            This.resultList =tempList 
+          }else{                         // 成功识别为无结果   
+            This.noResult = true 
+          } 
           This.$apply() 
-        }).catch((err)=>{
-
+        }).catch((err)=>{ 
           wepy.hideLoading()
-          This.failNotic = err  
+          This.failNotic = err
+           
           This.$apply()  
         })
             
@@ -267,5 +276,7 @@
       text-align center    
     .result-list
       display block
-      background #f7f7f7 
+      background #f7f7f7
+    .no-reault
+      text-align center 
 </style>

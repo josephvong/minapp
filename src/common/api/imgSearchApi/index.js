@@ -128,8 +128,9 @@ export function recurImgSearch(imgId){ // 递归 访问接口
             console.log('轮询'+times) 
             getData(imgId)  //递归
           }else if(res.status===0 && res.jsonData && res.jsonData.status=="1"){ 
-            Rej(res.jsonData.description) 
-          }else if(res.status===0 && res.jsonData && res.jsonData.status=="0" && res.jsonData.wine_list.length){
+            console.log('no-result-ok')
+            Res(res.jsonData) 
+          }else if(res.status===0 && res.jsonData && res.jsonData.status=="0" ){ //&& res.jsonData.wine_list.length
             console.log('ok')
             Res(res.jsonData)  // 返回搜索结果 
           }else{

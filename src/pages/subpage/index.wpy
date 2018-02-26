@@ -1,0 +1,47 @@
+
+<template>
+  <view class="sub-page-wrap">
+    <web-view src="{{subUrl}}"></web-view> 
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'  
+  export default class Subpage extends wepy.page {
+    config = {
+      navigationBarTitleText: 'test'
+    }
+    components = { 
+    }
+
+    //mixins = [testMixin]
+
+    data = {
+      subUrl:''
+    }
+
+    computed = {
+       
+    } 
+
+    methods = {
+       
+    }
+
+    events = {
+       
+    }
+
+    onLoad(params) {
+      this.subUrl = params.url 
+      //console.log(params.url) 
+    }
+  }
+</script>
+
+<style lang="stylus">
+.home-page-wrap
+  color black
+    
+      
+</style>

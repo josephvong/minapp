@@ -1,6 +1,6 @@
 
 <template>
-  <view class="wine-detail-page">
+  <view class="wine-detail-page" style="opacity:{{contentShow?1:0.2}}">
     <view class="wine-thumb-wrap">
       <view class="left-thumb" style="background-image:url({{wineData.wlable_img}})"> 
       </view>
@@ -29,16 +29,26 @@
       <view class="property-row">
         <view class="name">酒类型:</view>
         <view class="content">
-          <view>{{wineData.wine_type}}</view>
-          <view>{{wineData.sugar}}</view>
+          <view class="tapable" @tap="subPageGo({{wineData.wine_type_url}})">
+            {{wineData.wine_type}}
+          </view>
+          <view class="tapable" @tap="subPageGo({{wineData.sugar_url}})">
+            {{wineData.sugar}}
+          </view>
         </view>
       </view>
       <view class="property-row">
         <view class="name">产地:</view>
         <view class="content">
-          <view>{{wineData.country}}</view>
-          <view wx:if="wineData.region">{{wineData.region}}</view>
-          <view wx:if="wineData.sub_region">{{wineData.sub_region}}</view>
+          <view class="tapable" @tap="subPageGo({{wineData.country_url}})">
+            {{wineData.country}}
+          </view>
+          <view wx:if="wineData.region">
+            {{wineData.region}}
+          </view>
+          <view wx:if="wineData.sub_region">
+            {{wineData.sub_region}}
+          </view>
         </view>
       </view>
       <view class="property-row">
@@ -50,13 +60,18 @@
       <view class="property-row" style="display:{{wineData.winery_level==''?'none':'flex'}}">
         <view class="name">酒庄等级:</view>
         <view class="content">
-          <view>{{wineData.winery_level}}</view> 
+          <view class="tapable" @tap="subPageGo({{wineData.winery_level_url}})">
+            {{wineData.winery_level}}
+          </view> 
         </view>
       </view>
       <view class="property-row" wx:if="wineData.grape_variety.length">
         <view class="name">葡萄品种:</view>
         <view class="content">
-          <view wx:for="{{wineData.grape_variety}}" wx:key="index">{{item}}</view> 
+          <view class="tapable" wx:for="{{wineData.grape_variety_arr}}" wx:key="index" 
+          @tap="subPageGo({{item.grape_url}})">
+            {{item.grape_name}}
+          </view> 
         </view>
       </view>
       <view class="property-row" style="display:{{wineData.wine_desc==''?'none':'flex'}}">
@@ -92,9 +107,10 @@
     //mixins = [testMixin]
 
     data = {
+      contentShow:false,
       wineInfo:{}, // 调取接口的酒款信息
       wineData:{}, // 获取到的酒款信息
-      styleExp:false,
+      styleExp:false, // 隐藏/显示 切换值 
     }
 
     computed = {
@@ -120,8 +136,11 @@
           info.url=res.tempFilePath
           this.$invoke('cardRender','cardRender',info)
         })
-        //this.$invoke('cardRender','cardRender',info)
-        
+        //this.$invoke('cardRender','cardRender',info) 
+      },
+
+      subPageGo(url){
+        this.$navigate({url:`../subpage/index?url=${url}`})
       }
     }
 
@@ -140,8 +159,9 @@
     onLoad() {  
       wepy.showLoading({ title:'数据加载中...'})
       this.wineInfo = this.$parent.globalData.selectWineInfo
-      wineDetailApi(this.wineInfo).then((res)=>{
+      wineDetailApi(this.wineInfo).then((res)=>{ 
         this.wineData = res
+        this.contentShow = true
         wepy.hideLoading()
         console.log(res)
         this.$apply()
@@ -162,6 +182,8 @@
 .wine-detail-page
   color black
   padding-bottom 40rpx
+  .tapable
+    color #2EA5F7
   .wine-thumb-wrap
     display flex
     width 100%

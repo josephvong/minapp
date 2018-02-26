@@ -12,9 +12,9 @@
     <view class="img-search-btn"  @tap="routerGo('scansearch')">
       <text class="iconfont">&#xe603;</text> 拍照搜酒
     </view>
-    <!-- <view class="img-search-btn"  @tap="routerGo('imgsearch')">
-      图片搜酒
-    </view>  -->
+    <view class="img-search-btn"  @tap="routerGo('subpage')">
+      打开webview
+    </view>
       
    
   </view>

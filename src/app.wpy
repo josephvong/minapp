@@ -38,12 +38,13 @@ import 'wepy-async-function'
 import {kachaAuthApi} from 'api/kachaAuthApi/index'
 export default class extends wepy.app {
   config = {
-    pages: [ 
+    pages: [
       'pages/homepage/index',
       'pages/txtsearch/index',
       'pages/imgsearch/index',
       'pages/scansearch/index',
-      'pages/winedetail/index', 
+      'pages/winedetail/index',
+      'pages/subpage/index'
     ],
     window: {
       backgroundTextStyle: 'light',
