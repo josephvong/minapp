@@ -1,32 +1,36 @@
 <style lang="stylus"> 
 .input-tool
+  position absolute
   display flex
   flex-direction row
-  align-items center
-  width 100%
-  height 80rpx
+  align-items center 
+  top 0
+  bottom 0
+  left 0
+  right 0 
   border-radius 50rpx
   background #F3F1F2
   .icon
     flex 0 0 auto 
     padding 0 10rpx
-    color #BDBDBD 
+    //color #BDBDBD 
   .input-wrap
-    flex 1 
+    flex 1
+    color #BDBDBD 
   .clear-btn
     flex 0 0 auto 
-    padding 0 10rpx
-    color #BDBDBD 
+    padding 0 10rpx 
+    //color #BDBDBD 
 </style>
 
 <template>
 <form style="display:block" >
   <view class="input-tool">
-    <icon class="icon" type="search" size="20" />
+    <icon class="icon" type="search" size="20" color="#BDBDBD" />
     <view class="input-wrap">
      <input class="text" type="text" placeholder="搜索" value="{{inputValue}}" @input="inputChange" @confirm="inputToolSubmit" />
     </view>
-    <icon @tap="clearBtnTap" class="clear-btn" type="cancel" size="20" color="#BDBDBD" />
+    <icon @tap="clearBtnTap" class="clear-btn" type="cancel" size="20" color="#BDBDBD" style="opacity:{{inputValue==''?0:1}}" /><!-- {{inputValue==''?0:1}} -->
   </view>
 </form> 
 </template>
@@ -47,7 +51,7 @@
     }
 
     computed = {
-       
+
     } 
 
     methods = {

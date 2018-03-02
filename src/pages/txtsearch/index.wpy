@@ -22,9 +22,9 @@
             <span @tap="searchWordSend({{item}})" class="content">{{item}}</span>
             <!-- <icon @tap="deleteHistoryWord({{item}})" class="delete-item" type="cancel" size="24" color="#BDBDBD" /> -->
             <text @tap="deleteHistoryWord({{item}})" class="delete-item iconfont">&#xe61c;</text> 
-          </li>
-           
+          </li> 
         </ul>
+        <view class="clear">清空搜索历史</view> 
       </view>
       <view class="suggest-link" style="display:{{relateShow?'block':'none'}}">
         
@@ -67,9 +67,10 @@
   const HISTORY_LIST = searchHisSaveLoad()
 
   export default class txtSearch extends wepy.page {
-    config = {
-      navigationBarTitleText: '搜索'
-
+     config = {
+      navigationBarTitleText: '酒咔嚓',
+      navigationBarBackgroundColor: '#ffffff', 
+      backgroundColor:'#E03B3B',
     }
 
     components = {
@@ -225,25 +226,33 @@
 </script>
 
 <style lang="stylus">
+page
+  background:rgba(245,245,245,1);
 .txt-search-page
-  padding-top 100rpx
+  padding-top 110rpx
   .search-header
     position fixed
     left 0
     top 0
     width 100%
-    height 80rpx 
+    height 100rpx
+    padding 14rpx 30rpx
+    background:white 
+    border-bottom 1rpx solid #DDDDDD
     .text-wrap
+      position relative
       display block 
-      width 80% 
-      margin 0 auto 
+      width 100%
+      height 100%
+      font-size 26rpx 
   .short-cut-wrap
     width 100%
-    padding 20rpx
+    padding 20rpx 40rpx    
     .hot-link
+      margin-bottom 20rpx
       .title
-        line-height 78rpx
-        font-size 30rpx
+        line-height 40rpx
+        font-size 28rpx
         color #aeaeae;
       .word-list
         display flex
@@ -256,15 +265,17 @@
           display inline-block
           margin-left 20rpx
           margin-bottom 20rpx
-          padding 0 15rpx
-          line-height 70rpx
-          font-size 24rpx 
-          border 1rpx solid #aeaeae
-          border-radius 5rpx
+          padding 0 18rpx
+          line-height 50rpx
+          color #999999
+          font-size 26rpx 
+          border-radius 25rpx
+          background white
     .history-link
+      margin-bottom 20rpx
       .title
-        line-height 78rpx
-        font-size 30rpx
+        line-height 40rpx
+        font-size 28rpx
         color #aeaeae;
       .word-list
         display block
@@ -276,16 +287,24 @@
           display flex
           flex-flow row no-wrap
           align-items center
-          width 100% 
+          width 100%
+          border-bottom 1rpx solid #DDDDDD
+          color #999999
+          font-size 26rpx
+          line-height 77rpx 
           span.content
             flex 1 1 auto
-            line-height 60rpx
-            font-size 28rpx
+              
           .delete-item
-            flex 0 0 60rpx
-            width 60rpx
-            line-height 70rpx
-            text-align right  
+            flex 0 0 50rpx
+            width 50rpx 
+            text-align right
+      .clear
+        margin 20rpx auto
+        line-height 34rpx
+        font-size 24rpx
+        text-align center
+        color #999999        
     .suggest-link
       .search-query
         line-height 78rpx
@@ -302,7 +321,8 @@
         li
           display block
           line-height 60rpx
-          font-size 28rpx 
+          font-size 28rpx
+           
   .result-wrap
     position fixed 
     top 100rpx
@@ -311,16 +331,19 @@
     bottom 0
     background yellow                
     .result-list-wrap
+      box-sizing border-box
       width: 100%; 
-      height:100%;
+      height:100%; 
       background:white;
       .result-list
         display block
-        background #f7f7f7
+        padding 0 20rpx  
       .list-bottom
         width 100%
         text-align center
         line-height 120rpx
+        font-size 24rpx
+        color #CCCCCC
         
             
 </style>

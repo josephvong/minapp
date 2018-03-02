@@ -4,7 +4,7 @@
     <view class="header-wrap" @tap="routerGo('txtsearch')">
       <image class="bg-img" src="./new_bg@2x.png"></image> 
       <view class="txt-search-btn">
-        <text>搜索任意葡萄酒...</text>
+        <text>搜索葡萄酒/产地/年份...</text>
         <icon class="icon" type="search" size="20" />
       </view>
     </view>
@@ -12,10 +12,9 @@
     <view class="img-search-btn"  @tap="routerGo('scansearch')">
       <text class="iconfont">&#xe603;</text> 拍照搜酒
     </view>
-    <view class="img-search-btn"  @tap="routerGo('subpage')">
-      打开webview
-    </view>
-      
+
+
+    
    
   </view>
 </template>
@@ -24,7 +23,9 @@
   import wepy from 'wepy'  
   export default class Welcome extends wepy.page {
     config = {
-      navigationBarTitleText: 'test'
+      navigationBarTitleText: '酒咔嚓',
+      navigationBarBackgroundColor: '#fff',//'#fff',
+      backgroundColor:'#eeeeee',
     }
     components = { 
     }
@@ -62,6 +63,10 @@
         this.$apply()
       }) 
        
+    }
+
+    onShareAppMessage() {
+      console.log("CC")
     }
   }
 </script>

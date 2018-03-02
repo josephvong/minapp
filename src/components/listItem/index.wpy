@@ -1,8 +1,9 @@
 <style lang="stylus"> 
 .list-item
   display:block;
-  padding 20rpx  
+  padding 20rpx 0 
   background white
+  border-bottom 1rpx solid #DDDDDD
   &.precise
     background linear-gradient(to right,#F99E79,#D0365C)
     .title_cn,.title_en,.desc

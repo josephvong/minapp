@@ -21,6 +21,7 @@ export function wineDetailApi(wine_info){
   //"detail":
   let data = {
     "command":"1017",
+    "flags":"offline", // 'online' // 上线前切换
     "detail":{...wine_info}, 
     ...auth
   }

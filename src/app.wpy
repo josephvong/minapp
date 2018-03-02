@@ -47,10 +47,11 @@ export default class extends wepy.app {
       'pages/subpage/index'
     ],
     window: {
+      /*backgroundColor:'#eee',//'#F5F5F5',*/
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
+      navigationBarTextStyle:'black',
+      navigationBarTitleText: 'WeChat', 
     }
   }
 

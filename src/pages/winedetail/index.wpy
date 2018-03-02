@@ -73,17 +73,88 @@
             {{item.grape_name}}
           </view> 
         </view>
-      </view>
+      </view> 
+    </view>
+
+    <view class="property-wrap">
       <view class="property-row" style="display:{{wineData.wine_desc==''?'none':'flex'}}">
         <view class="name">酒品描述:</view>
         <view class="content">
           <view>{{wineData.wine_desc}}</view> 
         </view>
+      </view> 
+    </view>
+
+    <view class="property-wrap">
+      <view class="property-row">
+        <view class="name">场合:</view>
+        <view class="content">
+          <view>{{wineData.occasion}}</view> 
+        </view>
       </view>
+      <view class="property-row">
+        <view class="name">建议配餐:</view>
+        <view class="content">
+          <view>{{wineData.recipe_pair}}</view> 
+        </view>
+      </view>
+      <view class="property-row">
+        <view class="name">色泽:</view>
+        <view class="content">
+          <view>{{wineData.color}}</view> 
+        </view>
+      </view>
+
+      <view class="property-row">
+        <view class="name">香气:</view>
+        <view class="content">
+          <view>{{wineData.aroma}}</view> 
+        </view>
+      </view>
+
+      <view class="property-row">
+        <view class="name">口感:</view>
+        <view class="content">
+          <view>{{wineData.taste}}</view> 
+        </view>
+      </view>
+
+      <view class="property-row">
+        <view class="name">酒精度:</view>
+        <view class="content">
+          <view>{{wineData.alcohol}}</view> 
+        </view>
+      </view>
+      
+      <view class="property-row">
+        <view class="name">适饮温度:</view>
+        <view class="content">
+          <view>{{wineData.taste_temp}}</view> 
+        </view>
+      </view>
+      <view class="property-row">
+        <view class="name">醒酒时间:</view>
+        <view class="content">
+          <view>{{wineData.breathing}}</view> 
+        </view>
+      </view>
+      <view class="property-row">
+        <view class="name">容量:</view>
+        <view class="content">
+          <view>{{wineData.capacity}}</view> 
+        </view>
+      </view>
+      
     </view>
     
     <view class="share-btn" @tap="renderCard">
       分享
+    </view>
+    <view class="share-btn" @tap="ownRenderCard">
+      分享2
+    </view>
+    <view class="share-btn" @tap="reloadOtherYear">
+      改年
     </view>
     <cardRender></cardRender>
   </view>
@@ -121,7 +192,30 @@
       styleExpToggle(){
         this.styleExp = !this.styleExp
       },
-
+      ownRenderCard(){
+        let info = {
+          url:'',//this.wineData.wlable_img,
+          name_ch:this.wineData.name_ch,
+          name_en:this.wineData.name_en,
+          logo:LOGO
+        }
+        let chooseImg = new Promise((resolve,reject)=>{
+          wx.chooseImage({
+              count: 1, // 默认9
+              sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+              sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+              success(res) {
+                console.log(res)
+                  resolve(res.tempFilePaths[0]);
+              }
+          }) 
+        })
+        chooseImg.then((path)=>{
+          info.url=path
+          this.$invoke('cardRender','cardRender',info) 
+        })
+      },
+      
       renderCard(){
         let info = {
           url:'',//this.wineData.wlable_img,
@@ -132,7 +226,8 @@
         wepy.downloadFile({
           url:this.wineData.wlable_img
         }).then((res)=>{
-          console.log(res.tempFilePath)
+          console.log('下载成功')
+          //console.log(res.tempFilePath)
           info.url=res.tempFilePath
           this.$invoke('cardRender','cardRender',info)
         })
@@ -141,6 +236,21 @@
 
       subPageGo(url){
         this.$navigate({url:`../subpage/index?url=${url}`})
+      },
+
+      reloadOtherYear(){
+        wepy.showLoading({ title:'数据加载中...'})
+        this.contentShow = false
+        let newYear = this.wineData.wineYears[1]||''
+        let newInfo = Object.assign(this.wineInfo,{year:newYear})
+        console.log(newInfo)
+        wineDetailApi(newInfo).then((res)=>{ 
+          this.wineData = res
+          this.contentShow = true
+          wepy.hideLoading()
+          console.log(res)
+          this.$apply()
+        })
       }
     }
 
@@ -201,6 +311,8 @@
       background-size contain
     .right-describe
       flex 1
+      height 100%
+      padding-top 20rpx
       width auto
       .name_cn
         line-height 50rpx
@@ -255,7 +367,7 @@
     font-size 28rpx
     line-height 40rpx    
     padding 20rpx
-    border-top 20rpx solid #f5f5f5
+    border-top 20rpx solid #f5f5f5 
     //border-bottom 20rpx solid #f5f5f5
     .property-row
       display flex
