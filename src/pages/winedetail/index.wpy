@@ -143,9 +143,10 @@
         <view class="content">
           <view>{{wineData.capacity}}</view> 
         </view>
-      </view>
-      
+      </view> 
     </view>
+
+    view.
     
     <view class="share-btn" @tap="renderCard">
       分享
