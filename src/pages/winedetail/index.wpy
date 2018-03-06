@@ -146,17 +146,17 @@
       </view> 
     </view>
 
-    view.
+   
     
-    <view class="share-btn" @tap="renderCard">
+   <!--  <view class="share-btn" @tap="renderCard">
       分享
-    </view>
-    <view class="share-btn" @tap="ownRenderCard">
-      分享2
-    </view>
-    <view class="share-btn" @tap="reloadOtherYear">
+    </view>  -->
+     <button class="share-btn" open-type="share" >
+      分享
+    </button>
+    <!-- <view class="share-btn" @tap="reloadOtherYear"@tap="shareBtnClick">
       改年
-    </view>
+    </view> -->
     <cardRender></cardRender>
   </view>
 </template>
@@ -178,7 +178,11 @@
 
     //mixins = [testMixin]
 
-    data = {
+    data = { 
+      isAuthed:false, 
+      //--------------
+      pageUrl:null,
+      //--------------
       contentShow:false,
       wineInfo:{}, // 调取接口的酒款信息
       wineData:{}, // 获取到的酒款信息
@@ -252,40 +256,75 @@
           console.log(res)
           this.$apply()
         })
-      }
+      },
+
+      shareBtnClick(){
+        console.log(this.pageUrl)
+      } 
     }
 
-    events = {
-       
+    // -----------自定义函数------------
+    getCurPageUrlFull(){
+      let pages = getCurrentPages()
+      let currentPage = pages[pages.length-1]; // 当前页的 路由原
+      let url = currentPage.route  // 当前页面path
+      let options = currentPage.options
+      let fullUrl = url + '?'
+      for (let key in options) {
+        let value = options[key]; // 当前的遍历值
+        fullUrl+=`${key}=${value}&`
+      }
+      fullUrl = fullUrl.substring(0,fullUrl.length-1)
+      return fullUrl
+      //console.log(fullUrl)
     }
+    
 
     watch = {
        
     }
 
     events = {
-       
+      
     }
 
-    onLoad() {  
-      wepy.showLoading({ title:'数据加载中...'})
-      this.wineInfo = this.$parent.globalData.selectWineInfo
-      wineDetailApi(this.wineInfo).then((res)=>{ 
-        this.wineData = res
-        this.contentShow = true
-        wepy.hideLoading()
-        console.log(res)
+    onLoad(data) {   
+      wepy.showLoading({ title:'数据加载中...'})    
+      this.wineInfo = data  
+      this.$parent.userAuth().then((res)=>{ 
+        this.isAuthed = true
         this.$apply()
-      })
+        wineDetailApi(this.wineInfo).then((res)=>{ 
+          this.wineData = res
+          this.contentShow = true 
+          wepy.hideLoading()
+          //console.log(res)
+          this.$apply()
+        })
+      }) 
+    }
+
+    onShow(){ 
+      this.pageUrl = this.getCurPageUrlFull()
+      //console.log(this.pageUrl)
+      //this.$apply()
+    }
+
+    onShareAppMessage(){
+      return {
+        title:'测试',
+        desc:'test',
+        path:this.pageUrl
+      }
     }
 
     onHide(){
        
     }
 
-    onUnload(){
+    /*onUnload(){
       this.$parent.globalData.selectWineInfo = null 
-    }
+    }*/
   }
 </script>
 

@@ -3,7 +3,7 @@ export function kachaAuthApi(loginInfo,userData){
   let reqdata = {
     'v':'1.0.0',
     'client':'wx',
-    'flags':'offline', // 'online' // 上线前切换
+    'flags':'online', // 'online' // 上线前切换
     'command':'1003',
     'user':{
       'code':loginInfo.code,

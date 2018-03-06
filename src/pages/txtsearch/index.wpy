@@ -161,7 +161,8 @@
 
       goWineDetail(wine_info){
         this.$parent.globalData.selectWineInfo = wine_info 
-        this.$navigate({ url:`../winedetail/index?wine_id=${wine_info.wine_id}`})
+        this.$navigate({ url:`../winedetail/index?wine_id=${wine_info.wine_id}&sign=${wine_info.sign}&year=${wine_info.year}`})
+        
       },
 
       //--------------数据变化处理函数----------
@@ -186,7 +187,7 @@
           let settleList = res.map((item)=>{ // 列表数据过滤
             return txtItemDataInit(item)
           })
-          console.log(settleList)
+          //console.log(settleList)
           module.resultList = settleList
           if(res.length<10){
             module.listEnd = true
@@ -196,11 +197,7 @@
       },
       //-------------API 调用函数 ---------------
 
-      check(){
-        this.$parent.userAuth().then((res)=>{
-          console.log(res)
-        })
-      }
+       
 
        
        
@@ -220,7 +217,7 @@
 
     onLoad() {
       this.methods.getHotWord(this) 
-      console.log(searchHisSaveLoad())
+      //console.log(searchHisSaveLoad())
     }
   }
 </script>
